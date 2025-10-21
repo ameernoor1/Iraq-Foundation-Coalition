@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ائتلاف أساس العراق - العراق هو الأساس</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a7b7f">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #1a7b7f;
+            --primary-dark: #145f63;
+            --primary-light: #2a9ba0;
+            --secondary: #b8945f;
+            --accent: #0d4f52;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #ffffff;
+            --bg-secondary: #f0f9f9;
+            --border: #c5d9da;
+            --text: #1e293b;
+            --text-light: #475569;
+            --text-muted: #94a3b8;
+            --shadow-sm: 0 2px 8px rgba(26, 123, 127, 0.1);
+            --shadow: 0 4px 12px rgba(26, 123, 127, 0.15);
+            --shadow-md: 0 8px 20px rgba(26, 123, 127, 0.2);
+            --shadow-lg: 0 12px 28px rgba(26, 123, 127, 0.25);
+            --radius: 16px;
+            --radius-sm: 12px;
+            --radius-lg: 24px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #ffffff 50%, var(--bg-secondary) 100%);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* شاشة الانتظار */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: splashFade 1.8s ease-in-out;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        @keyframes splashFade {
+            0%, 80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        #splash img {
+            width: 160px;
+            height: 160px;
+            border-radius: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: logoFloat 2s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        #splash .app-title {
+            color: white;
+            font-size: 2em;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 8px;
+        }
+        
+        #splash .app-subtitle {
+            color: var(--secondary);
+            font-size: 1.3em;
+            font-weight: 600;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        
+        #splash .list-info-splash {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        #splash .list-item-splash {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 16px 24px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            animation: itemPop 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        #splash .list-item-splash:first-child {
+            animation-delay: 0.3s;
+        }
+        
+        #splash .list-item-splash:last-child {
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes itemPop {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        #splash .list-label-splash {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        #splash .list-number-splash {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        #splash .vote-slogan {
+            color: white;
+            font-size: 1.5em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            animation: textGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+            50% { text-shadow: 0 0 20px rgba(184, 148, 95, 0.8), 0 2px 8px rgba(0, 0, 0, 0.2); }
+        }
+        
+        #splash .motivation-text {
+            color: white;
+            font-size: 1.1em;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.8;
+            max-width: 500px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 1s ease-out 0.7s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 30px auto;
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 0;
+            overflow: hidden;
+            animation: containerSlideIn 0.6s ease-out;
+        }
+        
+        @keyframes containerSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* رأس التطبيق */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 32px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: headerShine 3s ease-in-out infinite;
+        }
+        
+        @keyframes headerShine {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, -20px); }
+        }
+        
+        .app-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .app-title-main {
+            font-size: 2em;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .app-subtitle-main {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 16px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .list-info {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 16px;
+            border-radius: var(--radius);
+            margin: 0 24px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .list-item {
+            text-align: center;
+        }
+        
+        .list-label {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .list-number {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .content-area {
+            padding: 32px 24px;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 28px;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 1em;
+            transition: var(--transition);
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(26, 123, 127, 0.1);
+            background: white;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius);
+            border: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26, 123, 127, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            padding: 8px;
+        }
+        
+        .link:hover {
+            color: var(--primary-light);
+            transform: translateX(-3px);
+        }
+        
+        .user-data {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, white 100%);
+            border-radius: var(--radius-lg);
+            padding: 32px 24px;
+            margin-top: 24px;
+            box-shadow: var(--shadow-md);
+            border: 2px solid var(--border);
+        }
+        
+        .profile-section {
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        
+        .profile-img-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-img-wrapper img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+        
+        .profile-img-wrapper:hover img {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .upload-hint {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary);
+            font-size: 0.85em;
+            font-weight: 600;
+            background: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+        }
+        
+        .flip-card {
+            background: transparent;
+            width: 260px;
+            height: 165px;
+            margin: 0 auto 24px auto;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 3px solid var(--secondary);
+        }
+        
+        .flip-card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-info {
+            margin-top: 24px;
+            text-align: right;
+        }
+        
+        .user-info > div {
+            background: white;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: var(--radius-sm);
+            border-right: 4px solid var(--primary);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        
+        .user-info > div:hover {
+            transform: translateX(-4px);
+            box-shadow: var(--shadow);
+        }
+        
+        .user-info strong {
+            color: var(--primary-dark);
+            font-weight: 700;
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        .user-info span {
+            color: var(--text);
+            margin-right: 8px;
+            font-weight: 500;
+        }
+        
+        /* زر التثبيت */
+        .install-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 700;
+            z-index: 9999;
+            box-shadow: 0 4px 16px rgba(26, 123, 127, 0.3);
+            border: none;
+            cursor: pointer;
+            animation: installPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes installPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                border-radius: var(--radius);
+            }
+            
+            .app-header {
+                padding: 24px 16px;
+            }
+            
+            .content-area {
+                padding: 24px 16px;
+            }
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+</head>
+<body>
+    <div id="splash">
+        <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق">
+        <div class="app-title">ائتلاف أساس العراق</div>
+        <div class="app-subtitle">العراق هو الأساس</div>
+    </div>
+    
+    <div class="container" id="app" style="display:none;"></div>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js');
+            });
+        }
+        
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+            }, 1800);
+        });
+        
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                // إذا لم يكن الزر موجوداً بالفعل
+                if (!document.getElementById('installBtn')) {
+                    const installBtn = document.createElement('button');
+                    installBtn.id = 'installBtn';
+                    installBtn.className = 'install-btn';
+                    installBtn.innerHTML = '📲 تثبيت التطبيق';
+                    installBtn.style.position = 'fixed';
+                    installBtn.style.bottom = '32px';
+                    installBtn.style.left = '50%';
+                    installBtn.style.transform = 'translateX(-50%)';
+                    installBtn.style.zIndex = '99999';
+                    installBtn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.2)';
+                    installBtn.style.fontSize = '1.2em';
+                    installBtn.style.width = 'auto';
+                    installBtn.style.maxWidth = '90vw';
+                    installBtn.style.padding = '16px 32px';
+                    installBtn.style.display = 'block';
+                    // رسالة تحفيزية
+                    const installMsg = document.createElement('div');
+                    installMsg.id = 'installMsg';
+                    installMsg.innerHTML = 'يمكنك تثبيت التطبيق على جهازك ليعمل بشكل أسرع وأكثر أماناً!';
+                    installMsg.style.position = 'fixed';
+                    installMsg.style.bottom = '80px';
+                    installMsg.style.left = '50%';
+                    installMsg.style.transform = 'translateX(-50%)';
+                    installMsg.style.zIndex = '99999';
+                    installMsg.style.background = 'var(--primary)';
+                    installMsg.style.color = 'white';
+                    installMsg.style.padding = '10px 24px';
+                    installMsg.style.borderRadius = '20px';
+                    installMsg.style.fontWeight = '600';
+                    installMsg.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+                    installMsg.style.fontSize = '1em';
+                    document.body.appendChild(installMsg);
+                    document.body.appendChild(installBtn);
+                    installBtn.addEventListener('click', async () => {
+                        if (deferredPrompt) {
+                            deferredPrompt.prompt();
+                            const { outcome } = await deferredPrompt.userChoice;
+                            if (outcome === 'accepted') {
+                                installBtn.style.display = 'none';
+                                installMsg.style.display = 'none';
+                            }
+                            deferredPrompt = null;
+                        }
+                    });
+                }
+        });
+            // إخفاء زر التثبيت إذا تم تثبيت التطبيق فعلاً
+            window.addEventListener('appinstalled', () => {
+                const installBtn = document.getElementById('installBtn');
+                const installMsg = document.getElementById('installMsg');
+                if (installBtn) installBtn.style.display = 'none';
+                if (installMsg) installMsg.style.display = 'none';
+            });
+        
+        const qadaList = [
+            'الحلة', 'الكفل', 'أبي غرق', 'سنجار',
+            'الهاشمية', 'القاسم', 'المدحتية', 'الشوملي', 'الطليعة',
+            'المحاويل', 'المشروع', 'الإمام', 'النيل',
+            'المسيب', 'الإسكندرية', 'سدة الهندية', 'جرف الصخر'
+        ];
+        
+        const candidateList = [
+            "سيد حسين السعبري", "حمزه جبار حربي محمد", "عدي اركان عباس نعمان",
+            "عصام فخري برتو عويد", "احمد بدر جاسم حسین", "اکرام کامل ظاهر محسن",
+            "ميثم عبد الجاسم عبد الحمزه", "فرح احمد کامل درب", "محمد جواد عبد الكاظم",
+            "تحسين فليح حسن عبود", "حسين كامل ناجي معيدي", "حميد حمزه کاظم مسیر",
+            "ابتسام حسن ذياب مرزوك", "اسیل خالد عبد محمد", "محمد هادي كاظم جواد",
+            "سلام عبد الكاظم عبد الله", "ثائر عبد اللطيف عبد الحميد", "زهره محمد سعود عزیز",
+            "مرزة حمزة عبدمعين", "عمر خضير عباس كسار", "زينب عباس علي لطيف",
+            "زهير عباس عبود رزوقي", "الاء عبد الكاظم عباس", "غيث علي سميسم عبيد",
+            "ياسر عامر صبار محيسن", "كريم سعد حسين لوطان", "نداء طالب محسن ثاجب",
+            "أسماء حسين جدوع کاظم", "زهير جواد ناجي عباس", "احمد سلمان عوده بريو",
+            "سعود حسن جمعة مطر"
+        ];
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf1n1TrAzwEMiAI",
+            authDomain: "messageemeapp.firebaseapp.com",
+            databaseURL: "https://messageemeapp-default-rtdb.firebaseio.com",
+            projectId: "messageemeapp",
+            storageBucket: "messageemeapp.appspot.com",
+            messagingSenderId: "255034474844",
+            appId: "1:255034474844:web:5e3b7a6bc4b2fb94cc4199",
+            measurementId: "G-4QBEWRC583"
+        };
+        
+        if (typeof firebase === 'undefined') {
+            alert('يرجى التأكد من توفر مكتبة Firebase في الصفحة');
+        } else {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+        }
+        
+        const db = typeof firebase !== 'undefined' ? firebase.database() : null;
+        
+        function saveUser(user) {
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            if (db) {
+                db.ref('users/' + user.phone).set(user, function(error) {
+                    if (error) {
+                        alert('حدث خطأ أثناء حفظ البيانات في قاعدة البيانات: ' + error.message);
+                    } else {
+                        alert('تم حفظ بياناتك بنجاح في قاعدة البيانات!');
+                    }
+                });
+            } else {
+                alert('تعذر الاتصال بقاعدة بيانات Firebase. يرجى التأكد من توفر الاتصال.');
+            }
+        }
+        
+        function findUser(name, phone) {
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            return users.find(u => u.fullName === name && u.phone === phone);
+        }
+        
+        function renderLogin() {
+            document.getElementById('app').innerHTML = `
+                <div class="app-header">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق" class="app-logo">
+                    <div class="app-title-main">ائتلاف أساس العراق</div>
+                    <div class="app-subtitle-main">العراق هو الأساس</div>
+                    <div class="list-info">
+                        <div class="list-item">
+                            <div class="list-label">القائمة</div>
+                            <div class="list-number">244</div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-label">التسلسل</div>
+                            <div class="list-number">1</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-area">
+                    <h2>تسجيل الدخول</h2>
+                    <form id="loginForm">
+                        <label>الاسم الثلاثي</label>
+                        <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
+                        <label>رقم الهاتف</label>
+                        <input type="text" name="phone" placeholder="أدخل رقم الهاتف" required>
+                        <button type="submit">دخول</button>
+                    </form>
+                    <span class="link" onclick="renderRegister()">ليس لديك حساب؟ أنشئ حساب جديد</span>
+                </div>
+            `;
+            
+            document.getElementById('loginForm').onsubmit = function(e) {
+                e.preventDefault();
+                const fullName = this.fullName.value.trim();
+                const phone = this.phone.value.trim();
+                const user = findUser(fullName, phone);
+                if (user) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    renderUserData(user);
+                } else {
+                    alert('لا يوجد مستخدم بهذه البيانات!');
+                }
+            };
+        }
+        
+        function renderRegister() {
+            document.getElementById('app').innerHTML = `
+                <div class="app-header">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق" class="app-logo">
+                    <div class="app-title-main">ائتلاف أساس العراق</div>
+                    <div class="app-subtitle-main">العراق هو الأساس</div>
+                    <div class="list-info">
+                        <div class="list-item">
+                            <div class="list-label">القائمة</div>
+                            <div class="list-number">244</div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-label">التسلسل</div>
+                            <div class="list-number">1</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-area">
+                    <h2>إنشاء حساب جديد</h2>
+                    <form id="registerForm">
+                        <label>الاسم الثلاثي</label>
+                        <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
+                        <label>رقم الهاتف</label>
+                        <input type="text" name="phone" placeholder="أدخل رقم الهاتف" required>
+                        <label>تاريخ الميلاد</label>
+                        <input type="date" name="birthDate" required>
+                        <label>القضاء</label>
+                        <select name="district" required>
+                            <option value="">-- اختر القضاء --</option>
+                            ${qadaList.map(q => `<option value="${q}">${q}</option>`).join('')}
+                        </select>
+                        <label>الجنس</label>
+                        <select name="gender" required>
+                            <option value="ذكر">ذكر</option>
+                            <option value="أنثى">أنثى</option>
+                        </select>
+                        <label>اسم المرشح (ائتلاف الأساس / بابل)</label>
+                        <select name="candidate" required>
+                            <option value="">-- اختر اسم المرشح --</option>
+                            ${candidateList.map(c => `<option value="${c}">${c}</option>`).join('')}
+                        </select>
+                        <label>ملاحظات (اختياري)</label>
+                        <input type="text" name="notes" placeholder="أضف ملاحظات إن وجدت">
+                        <label>الصورة الأمامية</label>
+                        <input type="file" name="front" accept="image/*" required>
+                        <button type="submit">إنشاء الحساب</button>
+                    </form>
+                    <span class="link" onclick="renderLogin()">لديك حساب؟ تسجيل الدخول</span>
+                </div>
+            `;
+            
+            document.getElementById('registerForm').onsubmit = function(e) {
+                e.preventDefault();
+                const fullName = this.fullName.value.trim();
+                const phone = this.phone.value.trim();
+                const birthDate = this.birthDate.value;
+                const district = this.district.value;
+                const gender = this.gender.value;
+                const candidate = this.candidate.value;
+                const notes = this.notes.value.trim();
+                const frontFile = this.front.files[0];
+                
+                if (!frontFile) {
+                    alert('يرجى رفع الصورة الأمامية المطلوبة');
+                    return;
+                }
+                if (!candidate) {
+                    alert('يرجى اختيار اسم المرشح');
+                    return;
+                }
+                
+                const storageRef = firebase.storage().ref();
+                const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
+                
+                fileRef.put(frontFile).then(snapshot => {
+                    return snapshot.ref.getDownloadURL();
+                }).then(downloadURL => {
+                    const user = {
+                        fullName,
+                        phone,
+                        birthDate,
+                        district,
+                        gender,
+                        candidate,
+                        notes,
+                        images: {
+                            front: downloadURL
+                        },
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    saveUser(user);
+                    renderUserData(user);
+                }).catch(err => {
+                    alert('فشل رفع الصورة: ' + err.message);
+                });
+            };
+        }
+        
+        function renderUserData(user) {
+            document.getElementById('app').innerHTML = `
+                <div class="app-header">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق" class="app-logo">
+                    <div class="app-title-main">ائتلاف أساس العراق</div>
+                    <div class="app-subtitle-main">العراق هو الأساس</div>
+                    <div class="list-info">
+                        <div class="list-item">
+                            <div class="list-label">القائمة</div>
+                            <div class="list-number">244</div>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-label">التسلسل</div>
+                            <div class="list-number">1</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-area">
+                    <h2>بيانات المستخدم</h2>
+                    <div class="user-data">
+                        <div class="profile-section">
+                            <div class="profile-img-wrapper">
+                                <label for="profileInput" style="cursor:pointer;">
+                                    <img id="profileImg" src="${user.profileImg ? user.profileImg : (user.images && user.images.front ? user.images.front : '')}" alt="صورة المستخدم">
+                                    ${!user.profileImg ? '<div class="upload-hint">أضف صورة انتخابك هنا</div>' : ''}
+                                </label>
+                                <input type="file" id="profileInput" accept="image/*" capture="environment" style="display:none">
+                            </div>
+                        </div>
+                        
+                        <div class="flip-card" id="flipCard">
+                            <div class="flip-card-inner">
+                                <div class="flip-card-front">
+                                    <img src="${user.images && user.images.front ? user.images.front : ''}" alt="الصورة الأمامية">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="user-info">
+                            <div><strong>الاسم الثلاثي:</strong> <span>${user.fullName}</span></div>
+                            <div><strong>رقم الهاتف:</strong> <span>${user.phone}</span></div>
+                            <div><strong>تاريخ الميلاد:</strong> <span>${user.birthDate}</span></div>
+                            <div><strong>القضاء:</strong> <span>${user.district}</span></div>
+                            <div><strong>الجنس:</strong> <span>${user.gender}</span></div>
+                            <div><strong>اسم المرشح:</strong> <span>${user.candidate ? user.candidate : ''}</span></div>
+                            ${user.notes ? `<div><strong>ملاحظات:</strong> <span>${user.notes}</span></div>` : ''}
+                        </div>
+                    </div>
+                    <button onclick="logoutUser()" style="margin-top:24px">تسجيل خروج</button>
+                </div>
+            `;
+            
+            setTimeout(function() {
+                var flipCard = document.getElementById('flipCard');
+                if (flipCard) {
+                    flipCard.addEventListener('click', function() {
+                        flipCard.classList.toggle('flipped');
+                    });
+                }
+                
+                var profileInput = document.getElementById('profileInput');
+                var profileImg = document.getElementById('profileImg');
+                if (profileImg && profileInput) {
+                    profileImg.onclick = function() { profileInput.click(); };
+                    profileInput.onchange = function(e) {
+                        var file = e.target.files[0];
+                        if (file) {
+                            const storageRef = firebase.storage().ref();
+                            const fileRef = storageRef.child('user-profiles/' + user.phone + '_profile_' + Date.now() + '.webp');
+                            fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL())
+                            .then(downloadURL => {
+                                document.getElementById('profileImg').src = downloadURL;
+                                user.profileImg = downloadURL;
+                                let users = JSON.parse(localStorage.getItem('users') || '[]');
+                                let idx = users.findIndex(u => u.phone === user.phone);
+                                if (idx !== -1) {
+                                    users[idx].profileImg = downloadURL;
+                                    localStorage.setItem('users', JSON.stringify(users));
+                                }
+                                if (db) {
+                                    db.ref('users/' + user.phone + '/profileImg').set(downloadURL);
+                                }
+                                renderUserData(user);
+                            })
+                            .catch(err => alert('فشل رفع الصورة: ' + err.message));
+                        }
+                    };
+                }
+            }, 100);
+        }
+        
+        function logoutUser() {
+            localStorage.removeItem('currentUser');
+            renderLogin();
+        }
+        
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            renderUserData(JSON.parse(currentUser));
+        } else {
+            if (typeof db !== 'undefined' && db) {
+                db.ref('users').once('value').then(snapshot => {
+                    const users = snapshot.val() ? Object.values(snapshot.val()) : [];
+                    localStorage.setItem('users', JSON.stringify(users));
+                    renderLogin();
+                });
+            } else {
+                renderLogin();
+            }
+        }
+    </script>
+</body>
+</html>

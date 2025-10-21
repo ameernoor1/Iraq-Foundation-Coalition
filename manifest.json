@@ -1,0 +1,35 @@
+{
+  "name": "تطبيق الانتخابات - صوتك مستقبلك",
+  "short_name": "الانتخابات",
+  "description": "نظام إدارة بيانات الناخبين للانتخابات البرلمانية العراقية - صوتك اليوم هو مستقبلك غداً",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1e40af",
+  "theme_color": "#1e40af",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "scope": "/",
+  "icons": [
+    {
+  "src": "https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+  "src": "https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["government", "politics", "utilities"],
+  "screenshots": [
+    {
+  "src": "https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ]
+}
