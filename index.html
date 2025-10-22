@@ -756,35 +756,37 @@
                 </div>
                 <div class="content-area">
                     <h2>إنشاء حساب جديد</h2>
-                    <form id="registerForm">
-                        <label>الاسم الثلاثي</label>
-                        <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
-                        <label>رقم الهاتف</label>
-                        <input type="text" name="phone" placeholder="أدخل رقم الهاتف" required>
-                        <label>تاريخ الميلاد</label>
-                        <input type="date" name="birthDate" required>
-                        <label>القضاء</label>
-                        <select name="district" required>
-                            <option value="">-- اختر القضاء --</option>
-                            ${qadaList.map(q => `<option value="${q}">${q}</option>`).join('')}
-                        </select>
-                        <label>الجنس</label>
-                        <select name="gender" required>
-                            <option value="ذكر">ذكر</option>
-                            <option value="أنثى">أنثى</option>
-                        </select>
-                        <label>اسم المرشح (ائتلاف الأساس / بابل)</label>
-                        <select name="candidate" required>
-                            <option value="">-- اختر اسم المرشح --</option>
-                            ${candidateList.map(c => `<option value="${c}">${c}</option>`).join('')}
-                        </select>
-                        <label>ملاحظات (اختياري)</label>
-                        <input type="text" name="notes" placeholder="أضف ملاحظات إن وجدت">
-                        <label>الصورة الأمامية</label>
-                        <input type="file" name="front" accept="image/*" required>
-                        <button type="submit">إنشاء الحساب</button>
-                    </form>
-                    <span class="link" onclick="renderLogin()">لديك حساب؟ تسجيل الدخول</span>
+                        <form id="registerForm">
+                            <label>الاسم الثلاثي</label>
+                            <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
+                            <label>رقم الهاتف</label>
+                            <input type="text" name="phone" placeholder="أدخل رقم الهاتف" required>
+                            <label>المدرسة</label>
+                            <input type="text" name="school" placeholder="أدخل اسم المدرسة" required>
+                            <label>رقم المحطة</label>
+                            <input type="text" name="stationNumber" placeholder="أدخل رقم المحطة" required>
+                            <label>القضاء</label>
+                            <select name="district" required>
+                                <option value="">-- اختر القضاء --</option>
+                                ${qadaList.map(q => `<option value="${q}">${q}</option>`).join('')}
+                            </select>
+                            <label>الجنس</label>
+                            <select name="gender" required>
+                                <option value="ذكر">ذكر</option>
+                                <option value="أنثى">أنثى</option>
+                            </select>
+                            <label>اسم المرشح (ائتلاف الأساس / بابل)</label>
+                            <select name="candidate" required>
+                                <option value="">-- اختر اسم المرشح --</option>
+                                ${candidateList.map(c => `<option value="${c}">${c}</option>`).join('')}
+                            </select>
+                            <label>تابع لمن</label>
+                            <input type="text" name="parent" placeholder="أدخل اسم التابع له">
+                            <label>الصورة الأمامية</label>
+                            <input type="file" name="front" accept="image/*" required>
+                            <button type="submit">إنشاء الحساب</button>
+                        </form>
+                        <span class="link" onclick="renderLogin()">لديك حساب؟ تسجيل الدخول</span>
                 </div>
             `;
             
@@ -792,13 +794,14 @@
                 e.preventDefault();
                 const fullName = this.fullName.value.trim();
                 const phone = this.phone.value.trim();
-                const birthDate = this.birthDate.value;
+                const school = this.school.value.trim();
+                const stationNumber = this.stationNumber.value.trim();
                 const district = this.district.value;
                 const gender = this.gender.value;
                 const candidate = this.candidate.value;
-                const notes = this.notes.value.trim();
+                const parent = this.parent.value.trim();
                 const frontFile = this.front.files[0];
-                
+
                 if (!frontFile) {
                     alert('يرجى رفع الصورة الأمامية المطلوبة');
                     return;
@@ -807,21 +810,22 @@
                     alert('يرجى اختيار اسم المرشح');
                     return;
                 }
-                
+
                 const storageRef = firebase.storage().ref();
                 const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
-                
+
                 fileRef.put(frontFile).then(snapshot => {
                     return snapshot.ref.getDownloadURL();
                 }).then(downloadURL => {
                     const user = {
                         fullName,
                         phone,
-                        birthDate,
+                        school,
+                        stationNumber,
                         district,
                         gender,
                         candidate,
-                        notes,
+                        parent,
                         images: {
                             front: downloadURL
                         },
@@ -877,11 +881,12 @@
                         <div class="user-info">
                             <div><strong>الاسم الثلاثي:</strong> <span>${user.fullName}</span></div>
                             <div><strong>رقم الهاتف:</strong> <span>${user.phone}</span></div>
-                            <div><strong>تاريخ الميلاد:</strong> <span>${user.birthDate}</span></div>
+                            <div><strong>المدرسة:</strong> <span>${user.school ? user.school : ''}</span></div>
+                            <div><strong>رقم المحطة:</strong> <span>${user.stationNumber ? user.stationNumber : ''}</span></div>
                             <div><strong>القضاء:</strong> <span>${user.district}</span></div>
                             <div><strong>الجنس:</strong> <span>${user.gender}</span></div>
                             <div><strong>اسم المرشح:</strong> <span>${user.candidate ? user.candidate : ''}</span></div>
-                            ${user.notes ? `<div><strong>ملاحظات:</strong> <span>${user.notes}</span></div>` : ''}
+                            ${user.parent ? `<div><strong>تابع لمن:</strong> <span>${user.parent}</span></div>` : ''}
                         </div>
                     </div>
                     <button onclick="logoutUser()" style="margin-top:24px">تسجيل خروج</button>
