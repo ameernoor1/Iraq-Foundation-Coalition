@@ -8,6 +8,31 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1a7b7f">
     <style>
+        /* مؤشر التحميل الدائري */
+        .loading-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
@@ -555,6 +580,24 @@
     <div class="container" id="app" style="display:none;"></div>
     
     <script>
+        // دالة لإظهار وإخفاء مؤشر التحميل
+        function showLoadingSpinner(msg) {
+            let spinnerDiv = document.getElementById('loadingSpinner');
+            if (!spinnerDiv) {
+                spinnerDiv = document.createElement('div');
+                spinnerDiv.id = 'loadingSpinner';
+                spinnerDiv.className = 'loading-spinner';
+                spinnerDiv.innerHTML = `<div><div class="spinner"></div><div style="color:#145f63;font-weight:700;font-size:1.2em;text-align:center;margin-top:18px">${msg||'جاري رفع البيانات...'}</div></div>`;
+                document.body.appendChild(spinnerDiv);
+            } else {
+                spinnerDiv.style.display = 'flex';
+                spinnerDiv.querySelector('div div:last-child').innerText = msg||'جاري رفع البيانات...';
+            }
+        }
+        function hideLoadingSpinner() {
+            let spinnerDiv = document.getElementById('loadingSpinner');
+            if (spinnerDiv) spinnerDiv.style.display = 'none';
+        }
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('service-worker.js');
@@ -671,10 +714,6 @@
         const db = typeof firebase !== 'undefined' ? firebase.database() : null;
         
         function saveUser(user) {
-            let users = JSON.parse(localStorage.getItem('users') || '[]');
-            users.push(user);
-            localStorage.setItem('users', JSON.stringify(users));
-            
             if (db) {
                 db.ref('users/' + user.phone).set(user, function(error) {
                     if (error) {
@@ -689,8 +728,21 @@
         }
         
         function findUser(name, phone) {
-            let users = JSON.parse(localStorage.getItem('users') || '[]');
-            return users.find(u => u.fullName === name && u.phone === phone);
+            // البحث في قاعدة بيانات Firebase فقط
+            return new Promise(function(resolve, reject) {
+                if (db) {
+                    db.ref('users/' + phone).once('value').then(function(snapshot) {
+                        const user = snapshot.val();
+                        if (user && user.fullName === name) {
+                            resolve(user);
+                        } else {
+                            resolve(null);
+                        }
+                    }).catch(reject);
+                } else {
+                    resolve(null);
+                }
+            });
         }
         
         function renderLogin() {
@@ -727,13 +779,14 @@
                 e.preventDefault();
                 const fullName = this.fullName.value.trim();
                 const phone = this.phone.value.trim();
-                const user = findUser(fullName, phone);
-                if (user) {
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    renderUserData(user);
-                } else {
-                    alert('لا يوجد مستخدم بهذه البيانات!');
-                }
+                findUser(fullName, phone).then(function(user) {
+                    if (user) {
+                        localStorage.setItem('currentUser', JSON.stringify(user));
+                        renderUserData(user);
+                    } else {
+                        alert('لا يوجد مستخدم بهذه البيانات!');
+                    }
+                });
             };
         }
         
@@ -791,6 +844,7 @@
             `;
             
             document.getElementById('registerForm').onsubmit = function(e) {
+
                 e.preventDefault();
                 const fullName = this.fullName.value.trim();
                 const phone = this.phone.value.trim();
@@ -811,33 +865,104 @@
                     return;
                 }
 
-                const storageRef = firebase.storage().ref();
-                const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
+                // تحقق من وجود رقم الهاتف في LocalStorage
+                // تجاهل LocalStorage، تحقق فقط من قاعدة بيانات Firebase
 
-                fileRef.put(frontFile).then(snapshot => {
-                    return snapshot.ref.getDownloadURL();
-                }).then(downloadURL => {
-                    const user = {
-                        fullName,
-                        phone,
-                        school,
-                        stationNumber,
-                        district,
-                        gender,
-                        candidate,
-                        parent,
-                        images: {
-                            front: downloadURL
-                        },
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString()
-                    };
-                    saveUser(user);
-                    renderUserData(user);
-                }).catch(err => {
-                    alert('فشل رفع الصورة: ' + err.message);
-                });
+                // تحقق من وجود رقم الهاتف في قاعدة بيانات Firebase
+                if (db) {
+                    showLoadingSpinner('جاري التحقق من رقم الهاتف...');
+                    db.ref('users/' + phone).once('value').then(function(snapshot) {
+                        hideLoadingSpinner();
+                        if (snapshot.exists()) {
+                            alert('رقم الهاتف موجود بالفعل في قاعدة البيانات!');
+                            return;
+                        } else {
+                            // تابع رفع الصورة وإنشاء الحساب
+                            showLoadingSpinner('جاري رفع الصورة...');
+                            const storageRef = firebase.storage().ref();
+                            const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
+                            fileRef.put(frontFile).then(snapshot => {
+                                return snapshot.ref.getDownloadURL();
+                            }).then(downloadURL => {
+                                hideLoadingSpinner();
+                                showLoadingSpinner('جاري رفع البيانات...');
+                                const user = {
+                                    fullName,
+                                    phone,
+                                    school,
+                                    stationNumber,
+                                    district,
+                                    gender,
+                                    candidate,
+                                    parent,
+                                    images: {
+                                        front: downloadURL
+                                    },
+                                    createdAt: new Date().toISOString(),
+                                    updatedAt: new Date().toISOString()
+                                };
+                                saveUserWithSpinner(user);
+                            }).catch(err => {
+                                hideLoadingSpinner();
+                                alert('فشل رفع الصورة: ' + err.message);
+                            });
+                        }
+                    });
+                } else {
+                    // إذا لم تتوفر قاعدة بيانات Firebase، تابع رفع الصورة وإنشاء الحساب
+                    showLoadingSpinner('جاري رفع الصورة...');
+                    const storageRef = firebase.storage().ref();
+                    const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
+                    fileRef.put(frontFile).then(snapshot => {
+                        return snapshot.ref.getDownloadURL();
+                    }).then(downloadURL => {
+                        hideLoadingSpinner();
+                        showLoadingSpinner('جاري رفع البيانات...');
+                        const user = {
+                            fullName,
+                            phone,
+                            school,
+                            stationNumber,
+                            district,
+                            gender,
+                            candidate,
+                            parent,
+                            images: {
+                                front: downloadURL
+                            },
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        };
+                        saveUserWithSpinner(user);
+                    }).catch(err => {
+                        hideLoadingSpinner();
+                        alert('فشل رفع الصورة: ' + err.message);
+                    });
+                }
             };
+
+            // دالة لحفظ المستخدم مع مؤشر التحميل
+            function saveUserWithSpinner(user) {
+                showLoadingSpinner('جاري رفع البيانات...');
+                let users = JSON.parse(localStorage.getItem('users') || '[]');
+                users.push(user);
+                localStorage.setItem('users', JSON.stringify(users));
+                if (db) {
+                    db.ref('users/' + user.phone).set(user, function(error) {
+                        hideLoadingSpinner();
+                        if (error) {
+                            alert('حدث خطأ أثناء حفظ البيانات في قاعدة البيانات: ' + error.message);
+                        } else {
+                            alert('تم حفظ بياناتك بنجاح في قاعدة البيانات!');
+                        }
+                        renderUserData(user);
+                    });
+                } else {
+                    hideLoadingSpinner();
+                    alert('تعذر الاتصال بقاعدة بيانات Firebase. يرجى التأكد من توفر الاتصال.');
+                    renderUserData(user);
+                }
+            }
         }
         
         function renderUserData(user) {
@@ -900,7 +1025,7 @@
                         flipCard.classList.toggle('flipped');
                     });
                 }
-                
+
                 var profileInput = document.getElementById('profileInput');
                 var profileImg = document.getElementById('profileImg');
                 if (profileImg && profileInput) {
@@ -908,10 +1033,12 @@
                     profileInput.onchange = function(e) {
                         var file = e.target.files[0];
                         if (file) {
+                            showLoadingSpinner('جاري رفع صورة المنتخب...');
                             const storageRef = firebase.storage().ref();
                             const fileRef = storageRef.child('user-profiles/' + user.phone + '_profile_' + Date.now() + '.webp');
                             fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL())
                             .then(downloadURL => {
+                                hideLoadingSpinner();
                                 document.getElementById('profileImg').src = downloadURL;
                                 user.profileImg = downloadURL;
                                 let users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -925,7 +1052,10 @@
                                 }
                                 renderUserData(user);
                             })
-                            .catch(err => alert('فشل رفع الصورة: ' + err.message));
+                            .catch(err => {
+                                hideLoadingSpinner();
+                                alert('فشل رفع الصورة: ' + err.message);
+                            });
                         }
                     };
                 }
@@ -941,15 +1071,7 @@
         if (currentUser) {
             renderUserData(JSON.parse(currentUser));
         } else {
-            if (typeof db !== 'undefined' && db) {
-                db.ref('users').once('value').then(snapshot => {
-                    const users = snapshot.val() ? Object.values(snapshot.val()) : [];
-                    localStorage.setItem('users', JSON.stringify(users));
-                    renderLogin();
-                });
-            } else {
-                renderLogin();
-            }
+            renderLogin();
         }
     </script>
 </body>
