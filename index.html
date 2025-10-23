@@ -714,6 +714,10 @@
         const db = typeof firebase !== 'undefined' ? firebase.database() : null;
         
         function saveUser(user) {
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            
             if (db) {
                 db.ref('users/' + user.phone).set(user, function(error) {
                     if (error) {
@@ -728,21 +732,8 @@
         }
         
         function findUser(name, phone) {
-            // البحث في قاعدة بيانات Firebase فقط
-            return new Promise(function(resolve, reject) {
-                if (db) {
-                    db.ref('users/' + phone).once('value').then(function(snapshot) {
-                        const user = snapshot.val();
-                        if (user && user.fullName === name) {
-                            resolve(user);
-                        } else {
-                            resolve(null);
-                        }
-                    }).catch(reject);
-                } else {
-                    resolve(null);
-                }
-            });
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            return users.find(u => u.fullName === name && u.phone === phone);
         }
         
         function renderLogin() {
@@ -779,14 +770,13 @@
                 e.preventDefault();
                 const fullName = this.fullName.value.trim();
                 const phone = this.phone.value.trim();
-                findUser(fullName, phone).then(function(user) {
-                    if (user) {
-                        localStorage.setItem('currentUser', JSON.stringify(user));
-                        renderUserData(user);
-                    } else {
-                        alert('لا يوجد مستخدم بهذه البيانات!');
-                    }
-                });
+                const user = findUser(fullName, phone);
+                if (user) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    renderUserData(user);
+                } else {
+                    alert('لا يوجد مستخدم بهذه البيانات!');
+                }
             };
         }
         
@@ -814,8 +804,8 @@
                             <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
                             <label>رقم الهاتف</label>
                             <input type="text" name="phone" placeholder="أدخل رقم الهاتف" required>
-                            <label>المدرسة</label>
-                            <input type="text" name="school" placeholder="أدخل اسم المدرسة" required>
+                            <label>المدرسة / المركز</label>
+                            <input type="text" name="school" placeholder="أدخل اسم المدرسة / المركز" required>
                             <label>رقم المحطة</label>
                             <input type="text" name="stationNumber" placeholder="أدخل رقم المحطة" required>
                             <label>القضاء</label>
@@ -833,8 +823,10 @@
                                 <option value="">-- اختر اسم المرشح --</option>
                                 ${candidateList.map(c => `<option value="${c}">${c}</option>`).join('')}
                             </select>
-                            <label>تابع لمن</label>
-                            <input type="text" name="parent" placeholder="أدخل اسم التابع له">
+                            <label>الركيزة</label>
+                            <input type="text" name="parent" placeholder="أدخل اسم الركيزة">
+                            <label>عدد الأفراد</label>
+                            <input type="number" name="individualCount" placeholder="أدخل عدد الأفراد" min="1" required>
                             <label>الصورة الأمامية</label>
                             <input type="file" name="front" accept="image/*" required>
                             <button type="submit">إنشاء الحساب</button>
@@ -844,7 +836,6 @@
             `;
             
             document.getElementById('registerForm').onsubmit = function(e) {
-
                 e.preventDefault();
                 const fullName = this.fullName.value.trim();
                 const phone = this.phone.value.trim();
@@ -854,6 +845,7 @@
                 const gender = this.gender.value;
                 const candidate = this.candidate.value;
                 const parent = this.parent.value.trim();
+                const individualCount = parseInt(this.individualCount.value) || 1;
                 const frontFile = this.front.files[0];
 
                 if (!frontFile) {
@@ -865,80 +857,37 @@
                     return;
                 }
 
-                // تحقق من وجود رقم الهاتف في LocalStorage
-                // تجاهل LocalStorage، تحقق فقط من قاعدة بيانات Firebase
+                showLoadingSpinner('جاري رفع الصورة...');
+                const storageRef = firebase.storage().ref();
+                const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
 
-                // تحقق من وجود رقم الهاتف في قاعدة بيانات Firebase
-                if (db) {
-                    showLoadingSpinner('جاري التحقق من رقم الهاتف...');
-                    db.ref('users/' + phone).once('value').then(function(snapshot) {
-                        hideLoadingSpinner();
-                        if (snapshot.exists()) {
-                            alert('رقم الهاتف موجود بالفعل في قاعدة البيانات!');
-                            return;
-                        } else {
-                            // تابع رفع الصورة وإنشاء الحساب
-                            showLoadingSpinner('جاري رفع الصورة...');
-                            const storageRef = firebase.storage().ref();
-                            const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
-                            fileRef.put(frontFile).then(snapshot => {
-                                return snapshot.ref.getDownloadURL();
-                            }).then(downloadURL => {
-                                hideLoadingSpinner();
-                                showLoadingSpinner('جاري رفع البيانات...');
-                                const user = {
-                                    fullName,
-                                    phone,
-                                    school,
-                                    stationNumber,
-                                    district,
-                                    gender,
-                                    candidate,
-                                    parent,
-                                    images: {
-                                        front: downloadURL
-                                    },
-                                    createdAt: new Date().toISOString(),
-                                    updatedAt: new Date().toISOString()
-                                };
-                                saveUserWithSpinner(user);
-                            }).catch(err => {
-                                hideLoadingSpinner();
-                                alert('فشل رفع الصورة: ' + err.message);
-                            });
-                        }
-                    });
-                } else {
-                    // إذا لم تتوفر قاعدة بيانات Firebase، تابع رفع الصورة وإنشاء الحساب
-                    showLoadingSpinner('جاري رفع الصورة...');
-                    const storageRef = firebase.storage().ref();
-                    const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
-                    fileRef.put(frontFile).then(snapshot => {
-                        return snapshot.ref.getDownloadURL();
-                    }).then(downloadURL => {
-                        hideLoadingSpinner();
-                        showLoadingSpinner('جاري رفع البيانات...');
-                        const user = {
-                            fullName,
-                            phone,
-                            school,
-                            stationNumber,
-                            district,
-                            gender,
-                            candidate,
-                            parent,
-                            images: {
-                                front: downloadURL
-                            },
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString()
-                        };
-                        saveUserWithSpinner(user);
-                    }).catch(err => {
-                        hideLoadingSpinner();
-                        alert('فشل رفع الصورة: ' + err.message);
-                    });
-                }
+                fileRef.put(frontFile).then(snapshot => {
+                    return snapshot.ref.getDownloadURL();
+                }).then(downloadURL => {
+                    hideLoadingSpinner();
+                    showLoadingSpinner('جاري رفع البيانات...');
+                    const user = {
+                        fullName,
+                        phone,
+                        school,
+                        stationNumber,
+                        district,
+                        gender,
+                        candidate,
+                        parent,
+                        individualCount,
+                        images: {
+                            front: downloadURL
+                        },
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    // حفظ البيانات مع مؤشر التحميل
+                    saveUserWithSpinner(user);
+                }).catch(err => {
+                    hideLoadingSpinner();
+                    alert('فشل رفع الصورة: ' + err.message);
+                });
             };
 
             // دالة لحفظ المستخدم مع مؤشر التحميل
@@ -1006,12 +955,13 @@
                         <div class="user-info">
                             <div><strong>الاسم الثلاثي:</strong> <span>${user.fullName}</span></div>
                             <div><strong>رقم الهاتف:</strong> <span>${user.phone}</span></div>
-                            <div><strong>المدرسة:</strong> <span>${user.school ? user.school : ''}</span></div>
+                            <div><strong>المدرسة / المركز:</strong> <span>${user.school ? user.school : ''}</span></div>
                             <div><strong>رقم المحطة:</strong> <span>${user.stationNumber ? user.stationNumber : ''}</span></div>
                             <div><strong>القضاء:</strong> <span>${user.district}</span></div>
                             <div><strong>الجنس:</strong> <span>${user.gender}</span></div>
                             <div><strong>اسم المرشح:</strong> <span>${user.candidate ? user.candidate : ''}</span></div>
-                            ${user.parent ? `<div><strong>تابع لمن:</strong> <span>${user.parent}</span></div>` : ''}
+                            ${user.parent ? `<div><strong>الركيزة:</strong> <span>${user.parent}</span></div>` : ''}
+                            ${user.individualCount ? `<div><strong>عدد الأفراد:</strong> <span>${user.individualCount}</span></div>` : ''}
                         </div>
                     </div>
                     <button onclick="logoutUser()" style="margin-top:24px">تسجيل خروج</button>
@@ -1071,7 +1021,15 @@
         if (currentUser) {
             renderUserData(JSON.parse(currentUser));
         } else {
-            renderLogin();
+            if (typeof db !== 'undefined' && db) {
+                db.ref('users').once('value').then(snapshot => {
+                    const users = snapshot.val() ? Object.values(snapshot.val()) : [];
+                    localStorage.setItem('users', JSON.stringify(users));
+                    renderLogin();
+                });
+            } else {
+                renderLogin();
+            }
         }
     </script>
 </body>
