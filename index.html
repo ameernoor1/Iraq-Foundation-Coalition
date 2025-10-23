@@ -3,37 +3,18 @@
 <head>
     <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ائتلاف أساس العراق - العراق هو الأساس</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ائتلاف أساس العراق - صوتك اليوم مستقبلك غداً</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1a7b7f">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* مؤشر التحميل الدائري */
-        .loading-spinner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 99999;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid var(--primary);
-            border-radius: 50%;
-            width: 70px;
-            height: 70px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
             --primary: #1a7b7f;
@@ -43,32 +24,361 @@
             --accent: #0d4f52;
             --success: #10b981;
             --danger: #ef4444;
-            --bg: #ffffff;
+            --iraq-red: #ce1126;
+            --iraq-white: #ffffff;
+            --iraq-black: #000000;
+            --iraq-green: #007a3d;
+            --bg: #f8fafc;
             --bg-secondary: #f0f9f9;
-            --border: #c5d9da;
+            --border: #e2e8f0;
             --text: #1e293b;
             --text-light: #475569;
             --text-muted: #94a3b8;
-            --shadow-sm: 0 2px 8px rgba(26, 123, 127, 0.1);
-            --shadow: 0 4px 12px rgba(26, 123, 127, 0.15);
-            --shadow-md: 0 8px 20px rgba(26, 123, 127, 0.2);
-            --shadow-lg: 0 12px 28px rgba(26, 123, 127, 0.25);
-            --radius: 16px;
+            --shadow-sm: 0 2px 8px rgba(26, 123, 127, 0.08);
+            --shadow: 0 4px 16px rgba(26, 123, 127, 0.12);
+            --shadow-md: 0 8px 24px rgba(26, 123, 127, 0.16);
+            --shadow-lg: 0 12px 32px rgba(26, 123, 127, 0.2);
+            --radius: 20px;
             --radius-sm: 12px;
-            --radius-lg: 24px;
+            --radius-lg: 28px;
             --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, #ffffff 50%, var(--bg-secondary) 100%);
+            font-family: 'Cairo', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f9f9 0%, #ffffff 50%, #f0f9f9 100%);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.7;
             overflow-x: hidden;
             min-height: 100vh;
+            position: relative;
         }
-        
-        /* شاشة الانتظار */
+
+        /* شاشة الترحيب المحسّنة */
+        #welcomeScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--primary) 100%);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        #welcomeScreen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(184, 148, 95, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            animation: bgMove 15s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            animation: welcomeFadeIn 1.2s ease-out;
+            padding-bottom: 0 !important;
+        }
+
+        @keyframes welcomeFadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-logo {
+            width: 140px;
+            height: 140px;
+            border-radius: 35px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            animation: logoEntrance 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 25px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes logoEntrance {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .welcome-title {
+            color: white;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 900;
+            text-align: center;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 15px;
+            animation: titleSlide 1s ease-out 0.3s both;
+            letter-spacing: -0.5px;
+        }
+
+        @keyframes titleSlide {
+            0% { opacity: 0; transform: translateX(50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .welcome-subtitle {
+            color: var(--secondary);
+            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: subtitleSlide 1s ease-out 0.5s both;
+        }
+
+        @keyframes subtitleSlide {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .list-info-welcome {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: nowrap;
+        }
+
+        .list-item-welcome {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 18px 28px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            animation: itemEntrance 0.8s ease-out both;
+            min-width: 120px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .list-item-welcome:first-child {
+            animation-delay: 0.7s;
+        }
+
+        .list-item-welcome:last-child {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes itemEntrance {
+            0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .list-label-welcome {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .list-number-welcome {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .motivation-box {
+            background: linear-gradient(135deg, rgba(206, 17, 38, 0.95) 0%, rgba(0, 122, 61, 0.95) 100%);
+            padding: 25px 30px;
+            border-radius: 25px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            animation: motivationEntrance 1s ease-out 1.1s both;
+            max-width: 500px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes motivationEntrance {
+            0% { opacity: 0; transform: translateY(50px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .motivation-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .motivation-title {
+            color: white;
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            font-weight: 900;
+            margin-bottom: 12px;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+            letter-spacing: -0.3px;
+        }
+
+        .motivation-text {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            line-height: 1.8;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 30px;
+            animation: dotsEntrance 1s ease-out 1.3s both;
+        }
+
+        @keyframes dotsEntrance {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .loading-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            animation: dotBounce 1.4s ease-in-out infinite;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* مؤشر التحميل المحسّن */
+        .loading-spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .spinner-container {
+            text-align: center;
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .spinner-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 5px solid transparent;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spinRing 1s linear infinite;
+        }
+
+        .spinner-ring:nth-child(2) {
+            border-top-color: var(--secondary);
+            animation-delay: 0.15s;
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+        }
+
+        .spinner-ring:nth-child(3) {
+            border-top-color: var(--iraq-green);
+            animation-delay: 0.3s;
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+        }
+
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner-text {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-bar-container {
+            width: 250px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 50%, var(--iraq-green) 100%);
+            border-radius: 10px;
+            animation: progressMove 2s ease-in-out infinite;
+            width: 0%;
+        }
+
+        @keyframes progressMove {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .upload-percentage {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-top: 15px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        /* شاشة Splash */
         #splash {
             position: fixed;
             top: 0;
@@ -81,287 +391,285 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            animation: splashFade 1.8s ease-in-out;
-            padding: 20px;
-            overflow-y: auto;
+            animation: splashFade 2s ease-in-out;
+            padding: 0;
+            overflow: hidden;
         }
         
         @keyframes splashFade {
-            0%, 80% { opacity: 1; }
-            100% { opacity: 0; }
+            0%, 85% { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
         }
-        
-        #splash img {
-            width: 160px;
-            height: 160px;
-            border-radius: 40px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            animation: logoFloat 2s ease-in-out infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        #splash .app-title {
-            color: white;
-            font-size: 2em;
-            font-weight: 700;
-            text-align: center;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 8px;
-        }
-        
-        #splash .app-subtitle {
-            color: var(--secondary);
-            font-size: 1.3em;
-            font-weight: 600;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-        }
-        
-        #splash .list-info-splash {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 20px;
-        }
-        
-        #splash .list-item-splash {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 16px 24px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            animation: itemPop 0.6s ease-out forwards;
-            opacity: 0;
-        }
-        
-        #splash .list-item-splash:first-child {
-            animation-delay: 0.3s;
-        }
-        
-        #splash .list-item-splash:last-child {
-            animation-delay: 0.5s;
-        }
-        
-        @keyframes itemPop {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        
-        #splash .list-label-splash {
-            font-size: 0.9em;
-            color: var(--text-light);
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-        
-        #splash .list-number-splash {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        #splash .vote-slogan {
-            color: white;
-            font-size: 1.5em;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            animation: textGlow 2s ease-in-out infinite;
-        }
-        
-        @keyframes textGlow {
-            0%, 100% { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
-            50% { text-shadow: 0 0 20px rgba(184, 148, 95, 0.8), 0 2px 8px rgba(0, 0, 0, 0.2); }
-        }
-        
-        #splash .motivation-text {
-            color: white;
-            font-size: 1.1em;
-            font-weight: 500;
-            text-align: center;
-            line-height: 1.8;
-            max-width: 500px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            animation: fadeInUp 1s ease-out 0.7s forwards;
-            opacity: 0;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .container {
-            max-width: 480px;
-            margin: 30px auto;
-            background: var(--bg);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
+
+        /* التطبيق الرئيسي */
+        #app {
+            max-width: 100%;
+            margin: 0;
             padding: 0;
-            overflow: hidden;
-            animation: containerSlideIn 0.6s ease-out;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        
-        @keyframes containerSlideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* رأس التطبيق */
+
         .app-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 32px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 10px 12px 8px;
             text-align: center;
+            box-shadow: 0 8px 24px rgba(26, 123, 127, 0.3);
             position: relative;
             overflow: hidden;
         }
-        
+
         .app-header::before {
             content: '';
             position: absolute;
             top: -50%;
-            right: -50%;
+            left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: headerShine 3s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: headerGlow 8s linear infinite;
         }
-        
-        @keyframes headerShine {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-20px, -20px); }
+
+        @keyframes headerGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        
-        .app-logo {
-            width: 100px;
-            height: 100px;
-            border-radius: 24px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .app-title-main {
-            font-size: 2em;
-            font-weight: 700;
+
+        /* زر تسجيل الخروج كأيقونة */
+        .logout-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(239, 68, 68, 0.9);
             color: white;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .app-subtitle-main {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: var(--secondary);
-            margin-bottom: 16px;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .list-info {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 16px;
-            border-radius: var(--radius);
-            margin: 0 24px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
             display: flex;
-            justify-content: space-around;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+            transition: var(--transition);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logout-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+            background: rgba(220, 38, 38, 1);
+        }
+
+        .logout-icon:active {
+            transform: scale(0.95);
+        }
+
+        .app-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 22px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            margin-bottom: 15px;
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            animation: logoFloat 3s ease-in-out infinite;
         }
-        
-        .list-item {
-            text-align: center;
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
         }
-        
-        .list-label {
-            font-size: 0.9em;
-            color: var(--text-light);
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-        
-        .list-number {
-            font-size: 2.2em;
-            font-weight: 700;
-            color: var(--primary);
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .content-area {
-            padding: 32px 24px;
-        }
-        
-        h2 {
-            text-align: center;
-            margin-bottom: 28px;
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        label {
-            display: block;
+
+        .app-title-main {
+            font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+            font-weight: 900;
             margin-bottom: 8px;
-            color: var(--text);
-            font-weight: 600;
-            font-size: 0.95em;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: -0.5px;
         }
-        
+
+        .app-subtitle-main {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .list-info {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex-wrap: nowrap;
+        }
+
+        .list-item {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            min-width: 110px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+        }
+
+        .list-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+        }
+
+        .list-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .list-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        /* منطقة المحتوى */
+        .content-area {
+            flex: 1;
+            padding: 25px 20px;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 2px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        label {
+            color: var(--text);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: -12px;
+        }
+
         input, select {
             width: 100%;
-            padding: 14px 16px;
-            margin-bottom: 20px;
-            border-radius: var(--radius-sm);
+            padding: 16px 18px;
             border: 2px solid var(--border);
-            background: var(--bg-secondary);
-            font-size: 1em;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-family: inherit;
             transition: var(--transition);
-            color: var(--text);
-            font-weight: 500;
-        }
-        
-        input:focus, select:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(26, 123, 127, 0.1);
             background: white;
+            color: var(--text);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(26, 123, 127, 0.07);
+        }
+
+        select {
+            min-width: 120px;
+            max-width: 100%;
+            background: linear-gradient(90deg, #f0f9f9 0%, #fff 100%);
+            border: 2px solid var(--primary-light);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        select option {
+            padding: 10px;
+            font-size: 1rem;
+            color: var(--primary-dark);
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        @media (max-width: 480px) {
+            select {
+                font-size: 1rem;
+                padding: 14px 12px;
+                min-width: 100px;
+            }
+            select option {
+                font-size: 0.95rem;
+                padding: 8px;
+            }
         }
         
-        button {
-            width: 100%;
-            padding: 16px;
-            border-radius: var(--radius);
-            border: none;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            font-size: 1.1em;
-            font-weight: 700;
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(26, 123, 127, 0.1);
+            transform: translateY(-2px);
+        }
+
+        select {
             cursor: pointer;
-            box-shadow: var(--shadow);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231a7b7f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 12px center;
+            background-size: 20px;
+            padding-left: 45px;
+        }
+
+        button {
+            padding: 16px 28px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
             transition: var(--transition);
+            font-family: inherit;
+            box-shadow: var(--shadow);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
         }
-        
+
         button::before {
             content: '';
             position: absolute;
@@ -374,311 +682,400 @@
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
-        
+
         button:hover::before {
             width: 300px;
             height: 300px;
         }
-        
+
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(26, 123, 127, 0.3);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: var(--primary);
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-            padding: 8px;
-        }
-        
-        .link:hover {
-            color: var(--primary-light);
-            transform: translateX(-3px);
-        }
-        
-        .user-data {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, white 100%);
-            border-radius: var(--radius-lg);
-            padding: 32px 24px;
-            margin-top: 24px;
-            box-shadow: var(--shadow-md);
-            border: 2px solid var(--border);
-        }
-        
-        .profile-section {
-            text-align: center;
-            margin-bottom: 24px;
-            position: relative;
-        }
-        
-        .profile-img-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .profile-img-wrapper img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--primary);
-            box-shadow: var(--shadow-md);
-            transition: var(--transition);
-        }
-        
-        .profile-img-wrapper:hover img {
-            transform: scale(1.05);
+            transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
         }
-        
-        .upload-hint {
-            position: absolute;
-            bottom: -24px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: var(--primary);
-            font-size: 0.85em;
-            font-weight: 600;
-            background: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-sm);
-            white-space: nowrap;
+
+        button:active {
+            transform: translateY(-1px);
         }
-        
-        .flip-card {
-            background: transparent;
-            width: 260px;
-            height: 165px;
-            margin: 0 auto 24px auto;
+
+        button[type="button"] {
+            background: linear-gradient(135deg, var(--text-muted) 0%, var(--text-light) 100%);
+        }
+
+        /* بطاقة المستخدم */
+        .user-card-container {
             perspective: 1000px;
-            cursor: pointer;
+            margin-bottom: 25px;
         }
-        
-        .flip-card-inner {
+
+        .user-card {
             position: relative;
             width: 100%;
-            height: 100%;
+            min-height: 500px;
             transition: transform 0.8s;
             transform-style: preserve-3d;
+            cursor: pointer;
         }
-        
-        .flip-card.flipped .flip-card-inner {
+
+        .user-card.flipped {
             transform: rotateY(180deg);
         }
-        
-        .flip-card-front {
+
+        .card-face {
             position: absolute;
             width: 100%;
-            height: 100%;
             backface-visibility: hidden;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
             overflow: hidden;
-            border: 3px solid var(--secondary);
         }
-        
-        .flip-card-front img {
+
+        .card-front {
+            background: linear-gradient(135deg, white 0%, var(--bg-secondary) 100%);
+            border: 3px solid var(--border);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            transform: rotateY(180deg);
+            color: white;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: cardGlow 10s linear infinite;
+        }
+
+        @keyframes cardGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .profile-img-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 15px;
+            z-index: 2;
+        }
+
+        .profile-img {
             width: 100%;
             height: 100%;
+            border-radius: 50%;
             object-fit: cover;
-        }
-        
-        .user-info {
-            margin-top: 24px;
-            text-align: right;
-        }
-        
-        .user-info > div {
-            background: white;
-            padding: 12px 16px;
-            margin-bottom: 10px;
-            border-radius: var(--radius-sm);
-            border-right: 4px solid var(--primary);
-            box-shadow: var(--shadow-sm);
+            border: 5px solid white;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
             transition: var(--transition);
         }
-        
-        .user-info > div:hover {
-            transform: translateX(-4px);
-            box-shadow: var(--shadow);
+
+        .profile-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
         }
-        
-        .user-info strong {
-            color: var(--primary-dark);
+
+        .camera-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--primary);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            border: 3px solid white;
+            transition: var(--transition);
+        }
+
+        .camera-icon:hover {
+            transform: scale(1.1);
+            background: var(--primary-dark);
+        }
+
+        .user-name {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+            margin-bottom: 8px;
+        }
+
+        .user-phone {
+            font-size: 1.1rem;
+            color: var(--secondary);
             font-weight: 700;
-            display: inline-block;
-            min-width: 100px;
+            position: relative;
+            z-index: 2;
         }
-        
-        .user-info span {
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+        }
+
+        .info-item {
+            background: var(--bg-secondary);
+            padding: 18px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .info-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
             color: var(--text);
-            margin-right: 8px;
+            font-weight: 800;
+        }
+
+        .card-back .info-item {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .card-back .info-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .card-back .info-value {
+            color: white;
+        }
+
+        .flip-hint {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--iraq-red) 0%, var(--iraq-green) 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 15px;
+            border-radius: var(--radius-sm);
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* رسائل التنبيه */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            left: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 18px 22px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            z-index: 100000;
+            animation: alertSlide 0.4s ease-out;
+            font-weight: 700;
+        }
+
+        @keyframes alertSlide {
+            0% { transform: translateY(-100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .alert-error {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* التوافق مع الشاشات الصغيرة */
+        @media (max-width: 480px) {
+            .list-info-welcome,
+            .list-info {
+                flex-direction: row !important;
+                gap: 8px !important;
+                justify-content: center;
+                align-items: center;
+            }
+            .list-item-welcome,
+            .list-item {
+                width: auto;
+                min-width: 90px;
+                max-width: 140px;
+                margin: 0 2px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .motivation-box {
+                padding: 20px;
+            }
+
+            .welcome-logo {
+                width: 120px;
+                height: 120px;
+            }
+
+            .logout-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+                top: 15px;
+                left: 15px;
+            }
+        }
+
+        /* إخفاء العناصر */
+        .hidden {
+            display: none !important;
+        }
+
+        /* تحسينات إضافية */
+        input[type="file"] {
+            display: none;
+        }
+
+        ::placeholder {
+            color: var(--text-muted);
             font-weight: 500;
         }
-        
-        /* زر التثبيت */
-        .install-btn {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-size: 1em;
-            font-weight: 700;
-            z-index: 9999;
-            box-shadow: 0 4px 16px rgba(26, 123, 127, 0.3);
-            border: none;
-            cursor: pointer;
-            animation: installPulse 2s ease-in-out infinite;
+
+        ::-webkit-scrollbar {
+            width: 10px;
         }
-        
-        @keyframes installPulse {
-            0%, 100% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.05); }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
         }
-        
-        @media (max-width: 480px) {
-            .container {
-                margin: 10px;
-                border-radius: var(--radius);
-            }
-            
-            .app-header {
-                padding: 24px 16px;
-            }
-            
-            .content-area {
-                padding: 24px 16px;
-            }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
         }
     </style>
+</head>
+<body>
+    <!-- شاشة الترحيب -->
+    <div id="welcomeScreen">
+        <div class="welcome-content">
+            <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق" class="welcome-logo">
+            <div class="welcome-title">ائتلاف أساس العراق</div>
+            <div class="welcome-subtitle">العراق هو الأساس</div>
+            <div class="list-info-welcome">
+                <div class="list-item-welcome">
+                    <div class="list-label-welcome">القائمة</div>
+                    <div class="list-number-welcome">244</div>
+                </div>
+                <div class="list-item-welcome">
+                    <div class="list-label-welcome">التسلسل</div>
+                    <div class="list-number-welcome">1</div>
+                </div>
+            </div>
+            <div class="motivation-box">
+                <div class="motivation-icon">🗳️</div>
+                <div class="motivation-title">صوتك اليوم هو مستقبلك غداً</div>
+                <div class="motivation-text">
+                    كل صوت يُحدث فرقاً.. شارك في بناء العراق الجديد
+                    <br>
+                    معاً نصنع التغيير.. معاً نبني المستقبل
+                </div>
+            </div>
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة Splash الأصلية -->
+    <div id="splash" class="hidden"></div>
+
+    <!-- مؤشر التحميل -->
+    <div id="loadingSpinner" class="loading-spinner hidden">
+        <div class="spinner-container">
+            <div class="spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <div class="spinner-text" id="loadingText">جاري التحميل...</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="upload-percentage" id="uploadPercentage">0%</div>
+        </div>
+    </div>
+
+    <!-- التطبيق الرئيسي -->
+    <div id="app"></div>
+
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-</head>
-<body>
-    <div id="splash">
-        <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق">
-        <div class="app-title">ائتلاف أساس العراق</div>
-        <div class="app-subtitle">العراق هو الأساس</div>
-    </div>
-    
-    <div class="container" id="app" style="display:none;"></div>
     
     <script>
-        // دالة لإظهار وإخفاء مؤشر التحميل
-        function showLoadingSpinner(msg) {
-            let spinnerDiv = document.getElementById('loadingSpinner');
-            if (!spinnerDiv) {
-                spinnerDiv = document.createElement('div');
-                spinnerDiv.id = 'loadingSpinner';
-                spinnerDiv.className = 'loading-spinner';
-                spinnerDiv.innerHTML = `<div><div class="spinner"></div><div style="color:#145f63;font-weight:700;font-size:1.2em;text-align:center;margin-top:18px">${msg||'جاري رفع البيانات...'}</div></div>`;
-                document.body.appendChild(spinnerDiv);
-            } else {
-                spinnerDiv.style.display = 'flex';
-                spinnerDiv.querySelector('div div:last-child').innerText = msg||'جاري رفع البيانات...';
-            }
-        }
-        function hideLoadingSpinner() {
-            let spinnerDiv = document.getElementById('loadingSpinner');
-            if (spinnerDiv) spinnerDiv.style.display = 'none';
-        }
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('service-worker.js');
-            });
-        }
-        
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.getElementById('splash').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-            }, 1800);
-        });
-        
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                // إذا لم يكن الزر موجوداً بالفعل
-                if (!document.getElementById('installBtn')) {
-                    const installBtn = document.createElement('button');
-                    installBtn.id = 'installBtn';
-                    installBtn.className = 'install-btn';
-                    installBtn.innerHTML = '📲 تثبيت التطبيق';
-                    installBtn.style.position = 'fixed';
-                    installBtn.style.bottom = '32px';
-                    installBtn.style.left = '50%';
-                    installBtn.style.transform = 'translateX(-50%)';
-                    installBtn.style.zIndex = '99999';
-                    installBtn.style.boxShadow = '0 4px 16px rgba(0,0,0,0.2)';
-                    installBtn.style.fontSize = '1.2em';
-                    installBtn.style.width = 'auto';
-                    installBtn.style.maxWidth = '90vw';
-                    installBtn.style.padding = '16px 32px';
-                    installBtn.style.display = 'block';
-                    // رسالة تحفيزية
-                    const installMsg = document.createElement('div');
-                    installMsg.id = 'installMsg';
-                    installMsg.innerHTML = 'يمكنك تثبيت التطبيق على جهازك ليعمل بشكل أسرع وأكثر أماناً!';
-                    installMsg.style.position = 'fixed';
-                    installMsg.style.bottom = '80px';
-                    installMsg.style.left = '50%';
-                    installMsg.style.transform = 'translateX(-50%)';
-                    installMsg.style.zIndex = '99999';
-                    installMsg.style.background = 'var(--primary)';
-                    installMsg.style.color = 'white';
-                    installMsg.style.padding = '10px 24px';
-                    installMsg.style.borderRadius = '20px';
-                    installMsg.style.fontWeight = '600';
-                    installMsg.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-                    installMsg.style.fontSize = '1em';
-                    document.body.appendChild(installMsg);
-                    document.body.appendChild(installBtn);
-                    installBtn.addEventListener('click', async () => {
-                        if (deferredPrompt) {
-                            deferredPrompt.prompt();
-                            const { outcome } = await deferredPrompt.userChoice;
-                            if (outcome === 'accepted') {
-                                installBtn.style.display = 'none';
-                                installMsg.style.display = 'none';
-                            }
-                            deferredPrompt = null;
-                        }
-                    });
-                }
-        });
-            // إخفاء زر التثبيت إذا تم تثبيت التطبيق فعلاً
-            window.addEventListener('appinstalled', () => {
-                const installBtn = document.getElementById('installBtn');
-                const installMsg = document.getElementById('installMsg');
-                if (installBtn) installBtn.style.display = 'none';
-                if (installMsg) installMsg.style.display = 'none';
-            });
-        
-        const qadaList = [
-            'الحلة', 'الكفل', 'أبي غرق', 'سنجار',
-            'الهاشمية', 'القاسم', 'المدحتية', 'الشوملي', 'الطليعة',
-            'المحاويل', 'المشروع', 'الإمام', 'النيل',
-            'المسيب', 'الإسكندرية', 'سدة الهندية', 'جرف الصخر'
+        // قوائم الأقضية والمرشحين
+        const DISTRICTS = [
+            'بابل',
+            'الحلة',
+            'المحاويل',
+            'المسيب',
+            'الهاشمية',
+            'القاسم',
+            'المدحتية',
+            'الإسكندرية',
+            'صدة الهندية'
         ];
-        
-        const candidateList = [
+
+        const CANDIDATES = [
             "سيد حسين السعبري", "حمزه جبار حربي محمد", "عدي اركان عباس نعمان",
             "عصام فخري برتو عويد", "احمد بدر جاسم حسین", "اکرام کامل ظاهر محسن",
             "ميثم عبد الجاسم عبد الحمزه", "فرح احمد کامل درب", "محمد جواد عبد الكاظم",
@@ -691,51 +1088,129 @@
             "أسماء حسين جدوع کاظم", "زهير جواد ناجي عباس", "احمد سلمان عوده بريو",
             "سعود حسن جمعة مطر"
         ];
-        
+
+        // تحسين عرض قائمة المرشحين بشكل جميل وجذاب
+        function createSelectOptions(array, selectedValue = '') {
+            let options = '<option value="">اختر...</option>';
+            array.forEach(item => {
+            const selected = item === selectedValue ? 'selected' : '';
+            options += `<option value="${item}" ${selected}>${item}</option>`;
+            });
+            return options;
+        }
+
+        // إخفاء شاشة الترحيب بعد 3 ثواني
+        setTimeout(() => {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            welcomeScreen.style.animation = 'splashFade 1s ease-in-out forwards';
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+            }, 1000);
+        }, 3000);
+
+        // تسجيل Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(reg => console.log('✅ Service Worker مسجل'))
+                .catch(err => console.log('❌ خطأ في تسجيل Service Worker:', err));
+        }
+
+        // إعداد Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyDGpAHia_wEmrhnmYjrPf1n1TrAzwEMiAI",
+            apiKey: "AIzaSyCcXuYS86E0VCcMzC22Rg3t9VYGPQ_MjJE",
             authDomain: "messageemeapp.firebaseapp.com",
             databaseURL: "https://messageemeapp-default-rtdb.firebaseio.com",
             projectId: "messageemeapp",
             storageBucket: "messageemeapp.appspot.com",
-            messagingSenderId: "255034474844",
-            appId: "1:255034474844:web:5e3b7a6bc4b2fb94cc4199",
-            measurementId: "G-4QBEWRC583"
+            messagingSenderId: "867426696402",
+            appId: "1:867426696402:web:2c88ad0c9e1a0a6a0f8f3a"
         };
-        
-        if (typeof firebase === 'undefined') {
-            alert('يرجى التأكد من توفر مكتبة Firebase في الصفحة');
-        } else {
+
+        let db = null;
+        try {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
+            db = firebase.database();
+            console.log('✅ Firebase متصل بنجاح');
+        } catch (error) {
+            console.error('❌ خطأ في الاتصال بـ Firebase:', error);
         }
-        
-        const db = typeof firebase !== 'undefined' ? firebase.database() : null;
-        
-        function saveUser(user) {
-            let users = JSON.parse(localStorage.getItem('users') || '[]');
-            users.push(user);
-            localStorage.setItem('users', JSON.stringify(users));
+
+        // متغيرات عامة
+        let user = null;
+
+        // مؤشر التحميل المحسّن
+        function showLoadingSpinner(text = 'جاري التحميل...') {
+            const spinner = document.getElementById('loadingSpinner');
+            const loadingText = document.getElementById('loadingText');
+            const progressBar = document.getElementById('progressBar');
+            const uploadPercentage = document.getElementById('uploadPercentage');
             
-            if (db) {
-                db.ref('users/' + user.phone).set(user, function(error) {
-                    if (error) {
-                        alert('حدث خطأ أثناء حفظ البيانات في قاعدة البيانات: ' + error.message);
-                    } else {
-                        alert('تم حفظ بياناتك بنجاح في قاعدة البيانات!');
-                    }
-                });
-            } else {
-                alert('تعذر الاتصال بقاعدة بيانات Firebase. يرجى التأكد من توفر الاتصال.');
+            loadingText.textContent = text;
+            spinner.classList.remove('hidden');
+            
+            // محاكاة تقدم واقعي للرفع
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 95) {
+                    progress = 95;
+                    clearInterval(interval);
+                }
+                progressBar.style.width = progress + '%';
+                uploadPercentage.textContent = Math.floor(progress) + '%';
+            }, 200);
+            
+            // حفظ interval للتنظيف لاحقاً
+            spinner.dataset.interval = interval;
+        }
+
+        function hideLoadingSpinner() {
+            const spinner = document.getElementById('loadingSpinner');
+            const progressBar = document.getElementById('progressBar');
+            const uploadPercentage = document.getElementById('uploadPercentage');
+            
+            // إكمال التقدم إلى 100%
+            progressBar.style.width = '100%';
+            uploadPercentage.textContent = '100%';
+            
+            // مسح interval إذا كان موجوداً
+            if (spinner.dataset.interval) {
+                clearInterval(parseInt(spinner.dataset.interval));
             }
+            
+            setTimeout(() => {
+                spinner.classList.add('hidden');
+                progressBar.style.width = '0%';
+                uploadPercentage.textContent = '0%';
+            }, 500);
         }
-        
-        function findUser(name, phone) {
-            let users = JSON.parse(localStorage.getItem('users') || '[]');
-            return users.find(u => u.fullName === name && u.phone === phone);
+
+        // عرض رسائل التنبيه
+        function showAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.animation = 'alertSlide 0.4s ease-out reverse';
+                setTimeout(() => alert.remove(), 400);
+            }, 3000);
         }
-        
+
+        // دالة لإنشاء قائمة منسدلة
+        function createSelectOptions(array, selectedValue = '') {
+            let options = '<option value="">اختر...</option>';
+            array.forEach(item => {
+                const selected = item === selectedValue ? 'selected' : '';
+                options += `<option value="${item}" ${selected}>${item}</option>`;
+            });
+            return options;
+        }
+
+        // شاشة تسجيل الدخول
         function renderLogin() {
             document.getElementById('app').innerHTML = `
                 <div class="app-header">
@@ -754,32 +1229,81 @@
                     </div>
                 </div>
                 <div class="content-area">
-                    <h2>تسجيل الدخول</h2>
+                    <h2>🗳️ تسجيل الدخول</h2>
                     <form id="loginForm">
                         <label>الاسم الثلاثي</label>
                         <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
+                        
                         <label>رقم الهاتف</label>
-                        <input type="text" name="phone" placeholder="أدخل رقم الهاتف" required>
+                        <input type="tel" name="phone" placeholder="07xxxxxxxxx" required pattern="[0-9]{11}" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        
                         <button type="submit">دخول</button>
                     </form>
-                    <span class="link" onclick="renderRegister()">ليس لديك حساب؟ أنشئ حساب جديد</span>
+                    <div style="text-align:center;margin-top:20px;">
+                        <button type="button" onclick="renderRegister()">مستخدم جديد؟ سجل الآن</button>
+                    </div>
                 </div>
             `;
             
-            document.getElementById('loginForm').onsubmit = function(e) {
-                e.preventDefault();
-                const fullName = this.fullName.value.trim();
-                const phone = this.phone.value.trim();
-                const user = findUser(fullName, phone);
-                if (user) {
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    renderUserData(user);
-                } else {
-                    alert('لا يوجد مستخدم بهذه البيانات!');
-                }
-            };
+            setTimeout(() => {
+                document.getElementById('loginForm').onsubmit = function(e) {
+                    e.preventDefault();
+                    const fullName = this.fullName.value.trim();
+                    const phone = this.phone.value.trim();
+                    
+                    showLoadingSpinner('جاري التحقق من بياناتك...');
+                    
+                    // محاولة جلب من قاعدة البيانات أولاً
+                    if (db) {
+                        db.ref('users/' + phone).once('value').then(snapshot => {
+                            hideLoadingSpinner();
+                            if (snapshot.exists()) {
+                                const userData = snapshot.val();
+                                // التحقق من الاسم
+                                if (userData.fullName === fullName) {
+                                    user = userData;
+                                    localStorage.setItem('currentUser', JSON.stringify(user));
+                                    showAlert('تم تسجيل الدخول بنجاح! 🎉');
+                                    renderUserData(user);
+                                } else {
+                                    showAlert('الاسم أو رقم الهاتف غير صحيح', 'error');
+                                }
+                            } else {
+                                // البحث في localStorage
+                                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                                const found = users.find(u => u.phone === phone && u.fullName === fullName);
+                                if (found) {
+                                    user = found;
+                                    localStorage.setItem('currentUser', JSON.stringify(user));
+                                    showAlert('تم تسجيل الدخول بنجاح! 🎉');
+                                    renderUserData(user);
+                                } else {
+                                    showAlert('الاسم أو رقم الهاتف غير صحيح. يرجى التسجيل أولاً', 'error');
+                                }
+                            }
+                        }).catch(err => {
+                            hideLoadingSpinner();
+                            showAlert('خطأ في الاتصال: ' + err.message, 'error');
+                        });
+                    } else {
+                        hideLoadingSpinner();
+                        // البحث في localStorage فقط
+                        const users = JSON.parse(localStorage.getItem('users') || '[]');
+                        const found = users.find(u => u.phone === phone && u.fullName === fullName);
+                        if (found) {
+                            user = found;
+                            localStorage.setItem('currentUser', JSON.stringify(user));
+                            showAlert('تم تسجيل الدخول بنجاح! 🎉');
+                            renderUserData(user);
+                        } else {
+                            showAlert('الاسم أو رقم الهاتف غير صحيح. يرجى التسجيل أولاً', 'error');
+                        }
+                    }
+                };
+            }, 100);
         }
-        
+
+        // شاشة التسجيل
         function renderRegister() {
             document.getElementById('app').innerHTML = `
                 <div class="app-header">
@@ -798,123 +1322,192 @@
                     </div>
                 </div>
                 <div class="content-area">
-                    <h2>إنشاء حساب جديد</h2>
-                        <form id="registerForm">
-                            <label>الاسم الثلاثي</label>
-                            <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
-                            <label>رقم الهاتف</label>
-                            <input type="text" name="phone" placeholder="أدخل رقم الهاتف" required>
-                            <label>المدرسة / المركز</label>
-                            <input type="text" name="school" placeholder="أدخل اسم المدرسة / المركز" required>
-                            <label>رقم المحطة</label>
-                            <input type="text" name="stationNumber" placeholder="أدخل رقم المحطة" required>
-                            <label>القضاء</label>
-                            <select name="district" required>
-                                <option value="">-- اختر القضاء --</option>
-                                ${qadaList.map(q => `<option value="${q}">${q}</option>`).join('')}
-                            </select>
-                            <label>الجنس</label>
-                            <select name="gender" required>
-                                <option value="ذكر">ذكر</option>
-                                <option value="أنثى">أنثى</option>
-                            </select>
-                            <label>اسم المرشح (ائتلاف الأساس / بابل)</label>
-                            <select name="candidate" required>
-                                <option value="">-- اختر اسم المرشح --</option>
-                                ${candidateList.map(c => `<option value="${c}">${c}</option>`).join('')}
-                            </select>
-                            <label>الركيزة</label>
-                            <input type="text" name="parent" placeholder="أدخل اسم الركيزة">
-                            <label>عدد الأفراد</label>
-                            <input type="number" name="individualCount" placeholder="أدخل عدد الأفراد" min="1" required>
-                            <label>الصورة الأمامية</label>
-                            <input type="file" name="front" accept="image/*" required>
-                            <button type="submit">إنشاء الحساب</button>
-                        </form>
-                        <span class="link" onclick="renderLogin()">لديك حساب؟ تسجيل الدخول</span>
+                    <h2>📝 تسجيل مستخدم جديد</h2>
+                    <form id="registerForm">
+                        <label>الاسم الثلاثي</label>
+                        <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
+                        <label>رقم الهاتف</label>
+                        <input type="tel" name="phone" placeholder="07xxxxxxxxx" required pattern="[0-9]{11}" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <label>المدرسة / المركز</label>
+                        <input type="text" name="school" placeholder="اسم المدرسة أو المركز" required>
+                        <label>رقم المحطة</label>
+                        <input type="number" name="stationNumber" placeholder="رقم المحطة" required min="1" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <label>القضاء</label>
+                        <select name="district" required>
+                            ${createSelectOptions(DISTRICTS)}
+                        </select>
+                        <label>الجنس</label>
+                        <select name="gender" required>
+                            <option value="">اختر الجنس</option>
+                            <option value="ذكر">ذكر</option>
+                            <option value="أنثى">أنثى</option>
+                        </select>
+                        <label>اسم المرشح</label>
+                        <select name="candidate" required>
+                            ${createSelectOptions(CANDIDATES)}
+                        </select>
+                        <label>الركيزة</label>
+                        <input type="text" name="parent" placeholder="اسم الركيزة" required>
+                        <label>عدد الأفراد</label>
+                        <input type="number" name="individualCount" value="1" min="1" required inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <label>الصورة الأمامية</label>
+                        <input type="file" id="frontImageInput" name="frontImage" accept="image/*" capture="environment" required style="display:none">
+                        <div style="text-align:center;margin-bottom:18px;">
+                            <button type="button" id="captureFrontBtn" style="background:var(--primary);color:white;padding:12px 24px;border-radius:12px;font-weight:700;font-size:1.1em;">📷 التقاط/اختيار صورة أمامية</button>
+                            <span id="frontImageName" style="display:block;margin-top:8px;color:var(--primary-dark);"></span>
+                        </div>
+                        <button type="submit">تسجيل</button>
+                    </form>
+                    <div style="text-align:center;margin-top:20px;">
+                        <button type="button" onclick="renderLogin()">لديك حساب؟ سجل دخول</button>
+                    </div>
                 </div>
             `;
-            
-            document.getElementById('registerForm').onsubmit = function(e) {
-                e.preventDefault();
-                const fullName = this.fullName.value.trim();
-                const phone = this.phone.value.trim();
-                const school = this.school.value.trim();
-                const stationNumber = this.stationNumber.value.trim();
-                const district = this.district.value;
-                const gender = this.gender.value;
-                const candidate = this.candidate.value;
-                const parent = this.parent.value.trim();
-                const individualCount = parseInt(this.individualCount.value) || 1;
-                const frontFile = this.front.files[0];
-
-                if (!frontFile) {
-                    alert('يرجى رفع الصورة الأمامية المطلوبة');
-                    return;
-                }
-                if (!candidate) {
-                    alert('يرجى اختيار اسم المرشح');
-                    return;
-                }
-
-                showLoadingSpinner('جاري رفع الصورة...');
-                const storageRef = firebase.storage().ref();
-                const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
-
-                fileRef.put(frontFile).then(snapshot => {
-                    return snapshot.ref.getDownloadURL();
-                }).then(downloadURL => {
-                    hideLoadingSpinner();
-                    showLoadingSpinner('جاري رفع البيانات...');
-                    const user = {
-                        fullName,
-                        phone,
-                        school,
-                        stationNumber,
-                        district,
-                        gender,
-                        candidate,
-                        parent,
-                        individualCount,
-                        images: {
-                            front: downloadURL
-                        },
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString()
+            setTimeout(() => {
+                const captureBtn = document.getElementById('captureFrontBtn');
+                const frontInput = document.getElementById('frontImageInput');
+                const frontName = document.getElementById('frontImageName');
+                if (captureBtn && frontInput) {
+                    captureBtn.onclick = function() {
+                        frontInput.click();
                     };
-                    // حفظ البيانات مع مؤشر التحميل
-                    saveUserWithSpinner(user);
-                }).catch(err => {
-                    hideLoadingSpinner();
-                    alert('فشل رفع الصورة: ' + err.message);
-                });
-            };
-
-            // دالة لحفظ المستخدم مع مؤشر التحميل
-            function saveUserWithSpinner(user) {
-                showLoadingSpinner('جاري رفع البيانات...');
-                let users = JSON.parse(localStorage.getItem('users') || '[]');
-                users.push(user);
-                localStorage.setItem('users', JSON.stringify(users));
-                if (db) {
-                    db.ref('users/' + user.phone).set(user, function(error) {
-                        hideLoadingSpinner();
-                        if (error) {
-                            alert('حدث خطأ أثناء حفظ البيانات في قاعدة البيانات: ' + error.message);
+                    frontInput.onchange = function(e) {
+                        if (frontInput.files && frontInput.files[0]) {
+                            frontName.textContent = 'تم اختيار الصورة: ' + frontInput.files[0].name;
                         } else {
-                            alert('تم حفظ بياناتك بنجاح في قاعدة البيانات!');
+                            frontName.textContent = '';
                         }
-                        renderUserData(user);
-                    });
-                } else {
-                    hideLoadingSpinner();
-                    alert('تعذر الاتصال بقاعدة بيانات Firebase. يرجى التأكد من توفر الاتصال.');
-                    renderUserData(user);
+                    };
                 }
-            }
+            }, 100);
+            
+            setTimeout(() => {
+                document.getElementById('registerForm').onsubmit = function(e) {
+                    e.preventDefault();
+                    showLoadingSpinner('جاري حفظ بياناتك...');
+                    const frontInput = document.getElementById('frontImageInput');
+                    const phone = this.phone.value.trim();
+                    const fullName = this.fullName.value.trim();
+                    const school = this.school.value.trim();
+                    const stationNumber = this.stationNumber.value.trim();
+                    const district = this.district.value;
+                    const gender = this.gender.value;
+                    const candidate = this.candidate.value;
+                    const parent = this.parent.value.trim();
+                    const individualCount = this.individualCount.value.trim();
+                    // تحقق من جميع الخانات
+                    if (!phone || !fullName || !school || !stationNumber || !district || !gender || !candidate || !parent || !individualCount) {
+                        showAlert('يرجى تعبئة جميع الخانات بشكل صحيح!', 'error');
+                        return;
+                    }
+                    if (!frontInput.files || !frontInput.files[0]) {
+                        showAlert('يرجى اختيار أو التقاط صورة أمامية!', 'error');
+                        return;
+                    }
+                    // تحقق من رقم الهاتف في قاعدة البيانات
+                    showLoadingSpinner('جاري التحقق من رقم الهاتف...');
+                    if (db) {
+                        db.ref('users/' + phone).once('value').then(snapshot => {
+                            if (snapshot.exists()) {
+                                hideLoadingSpinner();
+                                showAlert('الحساب موجود بالفعل بهذا الرقم!', 'error');
+                                return;
+                            } else {
+                                // تابع رفع الصورة وحفظ البيانات
+                                showLoadingSpinner('جاري رفع الصورة الأمامية...');
+                                const frontFile = frontInput.files[0];
+                                const storageRef = firebase.storage().ref();
+                                const fileRef = storageRef.child('user-images/' + phone + '_front_' + Date.now() + '.webp');
+                                fileRef.put(frontFile).then(snapshot => {
+                                    return snapshot.ref.getDownloadURL();
+                                }).then(downloadURL => {
+                                    hideLoadingSpinner();
+                                    showLoadingSpinner('جاري حفظ بياناتك...');
+                                    const newUser = {
+                                        candidate,
+                                        createdAt: new Date().toISOString(),
+                                        district,
+                                        fullName,
+                                        gender,
+                                        images: {
+                                            front: downloadURL
+                                        },
+                                        individualCount: parseInt(individualCount) || 1,
+                                        parent,
+                                        phone,
+                                        profileImg: '',
+                                        school,
+                                        stationNumber,
+                                        updatedAt: new Date().toISOString()
+                                    };
+                                    // حفظ في localStorage
+                                    let users = JSON.parse(localStorage.getItem('users') || '[]');
+                                    users.push(newUser);
+                                    localStorage.setItem('users', JSON.stringify(users));
+                                    localStorage.setItem('currentUser', JSON.stringify(newUser));
+                                    // حفظ في Firebase
+                                    db.ref('users/' + newUser.phone).set(newUser).then(() => {
+                                        hideLoadingSpinner();
+                                        showAlert('تم التسجيل بنجاح! مرحباً بك 🎉');
+                                        user = newUser;
+                                        renderUserData(user);
+                                    }).catch(err => {
+                                        hideLoadingSpinner();
+                                        showAlert('تم التسجيل محلياً. خطأ في الاتصال بقاعدة البيانات', 'error');
+                                        user = newUser;
+                                        renderUserData(user);
+                                    });
+                                }).catch(err => {
+                                    hideLoadingSpinner();
+                                    showAlert('فشل رفع الصورة الأمامية: ' + err.message, 'error');
+                                });
+                            }
+                        }).catch(err => {
+                            hideLoadingSpinner();
+                            showAlert('خطأ في الاتصال بقاعدة البيانات: ' + err.message, 'error');
+                        });
+                    } else {
+                        hideLoadingSpinner();
+                        showAlert('تعذر الاتصال بقاعدة البيانات. يرجى المحاولة لاحقاً.', 'error');
+                    }
+                    // حفظ في localStorage
+                    let users = JSON.parse(localStorage.getItem('users') || '[]');
+                    // التحقق من عدم وجود الرقم مسبقاً
+                    if (users.some(u => u.phone === newUser.phone)) {
+                        hideLoadingSpinner();
+                        showAlert('رقم الهاتف مسجل مسبقاً', 'error');
+                        return;
+                    }
+                    users.push(newUser);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    localStorage.setItem('currentUser', JSON.stringify(newUser));
+                    // حفظ في Firebase
+                    if (db) {
+                        db.ref('users/' + newUser.phone).set(newUser).then(() => {
+                            hideLoadingSpinner();
+                            showAlert('تم التسجيل بنجاح! مرحباً بك 🎉');
+                            user = newUser;
+                            renderUserData(user);
+                        }).catch(err => {
+                            hideLoadingSpinner();
+                            showAlert('تم التسجيل محلياً. خطأ في الاتصال بقاعدة البيانات', 'error');
+                            user = newUser;
+                            renderUserData(user);
+                        });
+                    } else {
+                        hideLoadingSpinner();
+                        showAlert('تم التسجيل محلياً بنجاح! 🎉');
+                        user = newUser;
+                        renderUserData(user);
+                    }
+                };
+            }, 100);
         }
-        
-        function renderUserData(user) {
+
+        // عرض بيانات المستخدم
+        function renderUserData(userData) {
+            user = userData;
+            
             document.getElementById('app').innerHTML = `
                 <div class="app-header">
                     <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق" class="app-logo">
@@ -932,91 +1525,167 @@
                     </div>
                 </div>
                 <div class="content-area">
-                    <h2>بيانات المستخدم</h2>
-                    <div class="user-data">
-                        <div class="profile-section">
-                            <div class="profile-img-wrapper">
-                                <label for="profileInput" style="cursor:pointer;">
-                                    <img id="profileImg" src="${user.profileImg ? user.profileImg : (user.images && user.images.front ? user.images.front : '')}" alt="صورة المستخدم">
-                                    ${!user.profileImg ? '<div class="upload-hint">أضف صورة انتخابك هنا</div>' : ''}
-                                </label>
-                                <input type="file" id="profileInput" accept="image/*" capture="environment" style="display:none">
+                    <h2>👤 بطاقة الناخب</h2>
+                    <div class="user-card-container">
+                        <div class="user-card" id="flipCard">
+                            <!-- الوجه الأمامي -->
+                            <div class="card-face card-front">
+                                <div class="card-header">
+                                    <div class="profile-img-container">
+                                        <img src="${user.profileImg || 'https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf'}" 
+                                             alt="صورة المنتخب" 
+                                             class="profile-img" 
+                                             id="profileImg">
+                                        <div class="camera-icon">📷</div>
+                                        <input type="file" id="profileInput" accept="image/*">
+                                    </div>
+                                    <div class="user-name">${user.fullName}</div>
+                                    <div class="user-phone">📱 ${user.phone}</div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <div class="info-label">🏫 المدرسة/المركز</div>
+                                            <div class="info-value">${user.school || '-'}</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">🔢 رقم المحطة</div>
+                                            <div class="info-value">${user.stationNumber || '-'}</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">📍 القضاء</div>
+                                            <div class="info-value">${user.district}</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">👥 الجنس</div>
+                                            <div class="info-value">${user.gender}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flip-hint">👆 اضغط على البطاقة لرؤية المزيد</div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="flip-card" id="flipCard">
-                            <div class="flip-card-inner">
-                                <div class="flip-card-front">
-                                    <img src="${user.images && user.images.front ? user.images.front : ''}" alt="الصورة الأمامية">
+                            
+                            <!-- الوجه الخلفي -->
+                            <div class="card-face card-back">
+                                <div class="card-header" style="background: rgba(255,255,255,0.1);">
+                                    <div class="user-name">معلومات إضافية</div>
+                                    <div class="user-phone">🗳️ صوتك اليوم مستقبلك غداً</div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <div class="info-label">🎯 المرشح</div>
+                                            <div class="info-value">${user.candidate || '-'}</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">🏛️ الركيزة</div>
+                                            <div class="info-value">${user.parent || '-'}</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">👨‍👩‍👧‍👦 عدد الأفراد</div>
+                                            <div class="info-value">${user.individualCount || 1}</div>
+                                        </div>
+                                        <div class="info-item">
+                                            <div class="info-label">📅 تاريخ التسجيل</div>
+                                            <div class="info-value">${new Date(user.createdAt).toLocaleDateString('ar-IQ')}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flip-hint">👆 اضغط للعودة</div>
+                                    <div style="text-align:center;margin-top:24px;">
+                                        <button class="logout-icon" onclick="logoutUser()" title="تسجيل الخروج" style="position:static;display:inline-block;width:auto;height:auto;padding:12px 32px;font-size:1.1em;border-radius:16px;background:var(--danger);color:white;box-shadow:0 4px 16px rgba(239,68,68,0.2);margin-bottom:8px;">🚪 تسجيل الخروج</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="user-info">
-                            <div><strong>الاسم الثلاثي:</strong> <span>${user.fullName}</span></div>
-                            <div><strong>رقم الهاتف:</strong> <span>${user.phone}</span></div>
-                            <div><strong>المدرسة / المركز:</strong> <span>${user.school ? user.school : ''}</span></div>
-                            <div><strong>رقم المحطة:</strong> <span>${user.stationNumber ? user.stationNumber : ''}</span></div>
-                            <div><strong>القضاء:</strong> <span>${user.district}</span></div>
-                            <div><strong>الجنس:</strong> <span>${user.gender}</span></div>
-                            <div><strong>اسم المرشح:</strong> <span>${user.candidate ? user.candidate : ''}</span></div>
-                            ${user.parent ? `<div><strong>الركيزة:</strong> <span>${user.parent}</span></div>` : ''}
-                            ${user.individualCount ? `<div><strong>عدد الأفراد:</strong> <span>${user.individualCount}</span></div>` : ''}
-                        </div>
                     </div>
-                    <button onclick="logoutUser()" style="margin-top:24px">تسجيل خروج</button>
                 </div>
             `;
             
-            setTimeout(function() {
-                var flipCard = document.getElementById('flipCard');
+            setTimeout(() => {
+                // تفعيل قلب البطاقة
+                const flipCard = document.getElementById('flipCard');
                 if (flipCard) {
                     flipCard.addEventListener('click', function() {
                         flipCard.classList.toggle('flipped');
                     });
                 }
-
-                var profileInput = document.getElementById('profileInput');
-                var profileImg = document.getElementById('profileImg');
-                if (profileImg && profileInput) {
-                    profileImg.onclick = function() { profileInput.click(); };
+                
+                // تفعيل رفع الصورة
+                const profileInput = document.getElementById('profileInput');
+                const profileImg = document.getElementById('profileImg');
+                const cameraIcon = document.querySelector('.camera-icon');
+                
+                if (profileImg && profileInput && cameraIcon) {
+                    profileImg.onclick = (e) => {
+                        e.stopPropagation();
+                        profileInput.click();
+                    };
+                    cameraIcon.onclick = (e) => {
+                        e.stopPropagation();
+                        profileInput.click();
+                    };
+                    
                     profileInput.onchange = function(e) {
-                        var file = e.target.files[0];
+                        const file = e.target.files[0];
                         if (file) {
                             showLoadingSpinner('جاري رفع صورة المنتخب...');
+                            
                             const storageRef = firebase.storage().ref();
                             const fileRef = storageRef.child('user-profiles/' + user.phone + '_profile_' + Date.now() + '.webp');
-                            fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL())
-                            .then(downloadURL => {
-                                hideLoadingSpinner();
-                                document.getElementById('profileImg').src = downloadURL;
-                                user.profileImg = downloadURL;
-                                let users = JSON.parse(localStorage.getItem('users') || '[]');
-                                let idx = users.findIndex(u => u.phone === user.phone);
-                                if (idx !== -1) {
-                                    users[idx].profileImg = downloadURL;
-                                    localStorage.setItem('users', JSON.stringify(users));
+                            
+                            const uploadTask = fileRef.put(file);
+                            
+                            // متابعة التقدم
+                            uploadTask.on('state_changed',
+                                (snapshot) => {
+                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                    document.getElementById('progressBar').style.width = progress + '%';
+                                    document.getElementById('uploadPercentage').textContent = Math.floor(progress) + '%';
+                                },
+                                (error) => {
+                                    hideLoadingSpinner();
+                                    showAlert('فشل رفع الصورة: ' + error.message, 'error');
+                                },
+                                () => {
+                                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                                        hideLoadingSpinner();
+                                        document.getElementById('profileImg').src = downloadURL;
+                                        user.profileImg = downloadURL;
+                                        
+                                        // تحديث localStorage
+                                        let users = JSON.parse(localStorage.getItem('users') || '[]');
+                                        let idx = users.findIndex(u => u.phone === user.phone);
+                                        if (idx !== -1) {
+                                            users[idx].profileImg = downloadURL;
+                                            localStorage.setItem('users', JSON.stringify(users));
+                                        }
+                                        localStorage.setItem('currentUser', JSON.stringify(user));
+                                        
+                                        // تحديث Firebase
+                                        if (db) {
+                                            db.ref('users/' + user.phone + '/profileImg').set(downloadURL);
+                                        }
+                                        
+                                        showAlert('تم رفع الصورة بنجاح! 📸');
+                                    });
                                 }
-                                if (db) {
-                                    db.ref('users/' + user.phone + '/profileImg').set(downloadURL);
-                                }
-                                renderUserData(user);
-                            })
-                            .catch(err => {
-                                hideLoadingSpinner();
-                                alert('فشل رفع الصورة: ' + err.message);
-                            });
+                            );
                         }
                     };
                 }
             }, 100);
         }
-        
+
+        // تسجيل الخروج
         function logoutUser() {
-            localStorage.removeItem('currentUser');
-            renderLogin();
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                localStorage.removeItem('currentUser');
+                showAlert('تم تسجيل الخروج بنجاح! 👋');
+                setTimeout(() => renderLogin(), 1000);
+            }
         }
-        
+
+        // التحقق من المستخدم الحالي
         const currentUser = localStorage.getItem('currentUser');
         if (currentUser) {
             renderUserData(JSON.parse(currentUser));
@@ -1025,6 +1694,9 @@
                 db.ref('users').once('value').then(snapshot => {
                     const users = snapshot.val() ? Object.values(snapshot.val()) : [];
                     localStorage.setItem('users', JSON.stringify(users));
+                    renderLogin();
+                }).catch(err => {
+                    console.error('خطأ في جلب البيانات:', err);
                     renderLogin();
                 });
             } else {
