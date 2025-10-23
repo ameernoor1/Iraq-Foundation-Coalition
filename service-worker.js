@@ -3,13 +3,8 @@ const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
-  './service-worker.js',
-  'https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf',
-  'https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-512.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf',
-  'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap',
-  'https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js',
-  'https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js',
-  'https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js'
+  './service-worker.js'
+  // أي ملفات خارجية سيتم جلبها ديناميكياً عند الطلب فقط
 ];
 
 // تثبيت Service Worker
