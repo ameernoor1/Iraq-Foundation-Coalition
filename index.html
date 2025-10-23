@@ -3,7 +3,9 @@
 <head>
     <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>ائتلاف أساس العراق - صوتك اليوم مستقبلك غداً</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1a7b7f">
@@ -44,14 +46,23 @@
             --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
+        html, body {
+            height: 100%;
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+            position: relative;
+        }
         body {
             font-family: 'Cairo', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #f0f9f9 0%, #ffffff 50%, #f0f9f9 100%);
             color: var(--text);
             line-height: 1.7;
-            overflow-x: hidden;
             min-height: 100vh;
-            position: relative;
+        }
+        #app, .content-area, .user-card-container {
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         /* شاشة الترحيب المحسّنة */
@@ -549,10 +560,120 @@
         /* منطقة المحتوى */
         .content-area {
             flex: 1;
-            padding: 25px 20px;
-            max-width: 600px;
+            padding: 8px 6px 4px 6px;
+            max-width: 340px;
             width: 100%;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 0;
+        }
+        .app-header {
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        .app-logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 8px;
+        }
+        .app-title-main {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+        .app-subtitle-main {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        .list-info {
+            gap: 6px;
+        }
+        .list-item {
+            padding: 7px 12px;
+            min-width: 60px;
+            font-size: 0.9rem;
+        }
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+        }
+        label {
+            font-size: 0.85rem;
+            margin-bottom: -8px;
+        }
+        input, select {
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            border-radius: 10px;
+        }
+        button {
+            padding: 10px 18px;
+            font-size: 1rem;
+            border-radius: 10px;
+        }
+        @media (max-width: 480px) {
+            .content-area {
+                max-width: 98vw;
+                padding: 4px 2vw 2px 2vw;
+            }
+            .app-logo {
+                width: 48px;
+                height: 48px;
+            }
+            h2 {
+                font-size: 1rem;
+            }
+            input, select {
+                font-size: 0.92rem;
+                padding: 8px 8px;
+            }
+            button {
+                font-size: 0.95rem;
+                padding: 8px 12px;
+            }
+        }
+        .login-banner {
+            margin-top: 8px;
+            margin-bottom: 10px;
+        }
+        .app-header {
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+        .list-info {
+            margin-bottom: 0;
+        }
+        .login-actions {
+            margin-top: 18px;
+            margin-bottom: 0;
+        }
+        .login-register-btn {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary-light) 100%);
+            color: var(--primary-dark);
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            padding: 14px 32px;
+            box-shadow: 0 4px 16px rgba(26,123,127,0.10);
+            margin-top: 8px;
+            margin-bottom: 0;
+            transition: var(--transition);
+        }
+        .login-register-btn:hover {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+            color: var(--primary);
+            box-shadow: 0 8px 24px rgba(26,123,127,0.18);
+        }
+        .login-register-text {
+            font-size: 1.05rem;
+            color: var(--text-light);
+            font-weight: 700;
+            margin-bottom: 4px;
+            margin-top: 10px;
+            letter-spacing: 0.2px;
         }
 
         h2 {
@@ -1233,14 +1354,13 @@
                     <form id="loginForm">
                         <label>الاسم الثلاثي</label>
                         <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
-                        
                         <label>رقم الهاتف</label>
                         <input type="tel" name="phone" placeholder="07xxxxxxxxx" required pattern="[0-9]{11}" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                        
                         <button type="submit">دخول</button>
                     </form>
-                    <div style="text-align:center;margin-top:20px;">
-                        <button type="button" onclick="renderRegister()">مستخدم جديد؟ سجل الآن</button>
+                    <div style="display:flex;align-items:center;justify-content:center;margin-top:10px;gap:8px;">
+                        <span style="font-size:0.95rem;color:var(--text-light);font-weight:700;">مستخدم جديد؟</span>
+                        <button type="button" style="background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-light) 100%);color:var(--primary-dark);border:none;border-radius:10px;font-size:0.95rem;font-weight:800;padding:8px 18px;box-shadow:0 2px 8px rgba(26,123,127,0.10);margin:0;transition:var(--transition);" onclick="renderRegister()">سجل الآن</button>
                     </div>
                 </div>
             `;
