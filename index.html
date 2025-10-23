@@ -1181,6 +1181,12 @@
 </head>
 <body>
     <!-- شاشة الترحيب -->
+    <div id="iosInstallPrompt" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:white;border-radius:18px;box-shadow:0 4px 24px rgba(0,0,0,0.18);padding:18px 22px;z-index:99999;text-align:center;max-width:340px;">
+        <div style="font-size:1.2em;font-weight:700;color:#1a7b7f;margin-bottom:8px;">تثبيت التطبيق على جهازك</div>
+        <div style="font-size:1em;color:#555;margin-bottom:10px;">للحصول على تجربة أفضل، أضف التطبيق إلى الشاشة الرئيسية:</div>
+        <div style="font-size:0.95em;color:#888;margin-bottom:10px;">اضغط على زر <span style="font-size:1.2em;">مشاركة <img src='https://upload.wikimedia.org/wikipedia/commons/3/3e/IOS_Share_icon.png' style='height:1em;vertical-align:middle;'></span> ثم اختر <b>إضافة إلى الشاشة الرئيسية</b></div>
+        <button onclick="document.getElementById('iosInstallPrompt').style.display='none'" style="background:#1a7b7f;color:white;padding:8px 18px;border:none;border-radius:10px;font-size:1em;box-shadow:0 2px 8px rgba(26,123,127,0.12);margin-top:8px;cursor:pointer;">حسناً</button>
+    </div>
     <div id="welcomeScreen">
         <div class="welcome-content">
             <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/Gemini_Generated_Image_tkcjwitkcjwitkcj.png?alt=media&token=3fbffecf-8da5-405d-bcc4-82e2133149f1" alt="شعار التطبيق" class="welcome-logo">
@@ -1241,6 +1247,19 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
     
     <script>
+        // عرض نافذة تثبيت التطبيق لمستخدمي iPhone/Safari
+        function showIOSInstallPrompt() {
+            var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+            var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            var isInStandalone = window.navigator.standalone === true;
+            if (isIOS && isSafari && !isInStandalone) {
+                setTimeout(function() {
+                    var prompt = document.getElementById('iosInstallPrompt');
+                    if (prompt) prompt.style.display = 'block';
+                }, 2000);
+            }
+        }
+        showIOSInstallPrompt();
         // قوائم الأقضية والمرشحين
         const DISTRICTS = [
             'بابل',
