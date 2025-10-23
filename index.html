@@ -4,7 +4,7 @@
     <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>ائتلاف أساس العراق - صوتك اليوم مستقبلك غداً</title>
     <link rel="manifest" href="manifest.json">
@@ -569,6 +569,50 @@
             justify-content: flex-start;
             min-height: 0;
         }
+        .register-content-area {
+            flex: 1;
+            padding: 8px 6px 4px 6px;
+            max-width: 340px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 0;
+        }
+        .register-form label {
+            font-size: 0.85rem;
+            margin-bottom: -8px;
+        }
+        .register-form input, .register-form select {
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            border-radius: 10px;
+        }
+        .register-form button {
+            padding: 10px 18px;
+            font-size: 1rem;
+            border-radius: 10px;
+        }
+        .register-form #captureFrontBtn {
+            padding: 8px 16px;
+            font-size: 0.95rem;
+            border-radius: 10px;
+        }
+        @media (max-width: 480px) {
+            .register-content-area {
+                max-width: 98vw;
+                padding: 4px 2vw 2px 2vw;
+            }
+            .register-form input, .register-form select {
+                font-size: 0.92rem;
+                padding: 8px 8px;
+            }
+            .register-form button, .register-form #captureFrontBtn {
+                font-size: 0.95rem;
+                padding: 8px 12px;
+            }
+        }
         .app-header {
             padding-top: 4px;
             padding-bottom: 4px;
@@ -829,37 +873,46 @@
         }
 
         .user-card {
-            position: relative;
-            width: 100%;
-            min-height: 500px;
-            transition: transform 0.8s;
-            transform-style: preserve-3d;
-            cursor: pointer;
-        }
 
-        .user-card.flipped {
-            transform: rotateY(180deg);
-        }
+                position: relative;
+                width: 100%;
+                min-height: 500px;
+                cursor: default;
+            }
 
-        .card-face {
-            position: absolute;
-            width: 100%;
-            backface-visibility: hidden;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-        }
-
-        .card-front {
-            background: linear-gradient(135deg, white 0%, var(--bg-secondary) 100%);
-            border: 3px solid var(--border);
-        }
-
-        .card-back {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            transform: rotateY(180deg);
-            color: white;
-        }
+            /* منطقة المعلومات فقط تدور */
+            .card-info-flip {
+                position: relative;
+                width: 100%;
+                min-height: 1px;
+                perspective: 1200px;
+            }
+            .card-info-inner {
+                width: 100%;
+                transition: transform 0.8s;
+                transform-style: preserve-3d;
+                position: relative;
+            }
+            .user-card.flipped .card-info-inner {
+                transform: rotateY(180deg);
+            }
+            .card-info-face {
+                position: absolute;
+                width: 100%;
+                left: 0;
+                top: 0;
+                backface-visibility: hidden;
+                border-radius: 0 0 var(--radius) var(--radius);
+                box-shadow: none;
+                overflow: visible;
+            }
+            .card-info-front {
+                z-index: 2;
+            }
+            .card-info-back {
+                transform: rotateY(180deg);
+                z-index: 3;
+            }
 
         .card-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -1441,9 +1494,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="content-area">
+                <div class="register-content-area">
                     <h2>📝 تسجيل مستخدم جديد</h2>
-                    <form id="registerForm">
+                    <form id="registerForm" class="register-form">
                         <label>الاسم الثلاثي</label>
                         <input type="text" name="fullName" placeholder="أدخل الاسم الثلاثي" required>
                         <label>رقم الهاتف</label>
@@ -1472,14 +1525,15 @@
                         <input type="number" name="individualCount" value="1" min="1" required inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         <label>الصورة الأمامية</label>
                         <input type="file" id="frontImageInput" name="frontImage" accept="image/*" capture="environment" required style="display:none">
-                        <div style="text-align:center;margin-bottom:18px;">
-                            <button type="button" id="captureFrontBtn" style="background:var(--primary);color:white;padding:12px 24px;border-radius:12px;font-weight:700;font-size:1.1em;">📷 التقاط/اختيار صورة أمامية</button>
-                            <span id="frontImageName" style="display:block;margin-top:8px;color:var(--primary-dark);"></span>
+                        <div style="text-align:center;margin-bottom:12px;">
+                            <button type="button" id="captureFrontBtn">📷 التقاط/اختيار صورة أمامية</button>
+                            <span id="frontImageName" style="display:block;margin-top:6px;color:var(--primary-dark);font-size:0.92rem;"></span>
                         </div>
                         <button type="submit">تسجيل</button>
                     </form>
-                    <div style="text-align:center;margin-top:20px;">
-                        <button type="button" onclick="renderLogin()">لديك حساب؟ سجل دخول</button>
+                    <div style="display:flex;align-items:center;justify-content:center;margin-top:10px;gap:8px;">
+                        <span style="font-size:0.95rem;color:var(--text-light);font-weight:700;">لديك حساب؟</span>
+                        <button type="button" style="background:linear-gradient(135deg, var(--secondary) 0%, var(--primary-light) 100%);color:var(--primary-dark);border:none;border-radius:10px;font-size:0.95rem;font-weight:800;padding:8px 18px;box-shadow:0 2px 8px rgba(26,123,127,0.10);margin:0;transition:var(--transition);" onclick="renderLogin()">سجل دخول</button>
                     </div>
                 </div>
             `;
@@ -1625,31 +1679,29 @@
         }
 
         // عرض بيانات المستخدم
-        function renderUserData(userData) {
-            user = userData;
-            
-            document.getElementById('app').innerHTML = `
-                <div class="app-header">
-                    <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق" class="app-logo">
-                    <div class="app-title-main">ائتلاف أساس العراق</div>
-                    <div class="app-subtitle-main">العراق هو الأساس</div>
-                    <div class="list-info">
-                        <div class="list-item">
-                            <div class="list-label">القائمة</div>
-                            <div class="list-number">244</div>
-                        </div>
-                        <div class="list-item">
-                            <div class="list-label">التسلسل</div>
-                            <div class="list-number">1</div>
+
+            function renderUserData(userData) {
+                user = userData;
+                document.getElementById('app').innerHTML = `
+                    <div class="app-header">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf" alt="شعار التطبيق" class="app-logo">
+                        <div class="app-title-main">ائتلاف أساس العراق</div>
+                        <div class="app-subtitle-main">العراق هو الأساس</div>
+                        <div class="list-info">
+                            <div class="list-item">
+                                <div class="list-label">القائمة</div>
+                                <div class="list-number">244</div>
+                            </div>
+                            <div class="list-item">
+                                <div class="list-label">التسلسل</div>
+                                <div class="list-number">1</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="content-area">
-                    <h2>👤 بطاقة الناخب</h2>
-                    <div class="user-card-container">
-                        <div class="user-card" id="flipCard">
-                            <!-- الوجه الأمامي -->
-                            <div class="card-face card-front">
+                    <div class="content-area">
+                        <h2>👤 بطاقة الناخب</h2>
+                        <div class="user-card-container">
+                            <div class="user-card" id="flipCard">
                                 <div class="card-header">
                                     <div class="profile-img-container">
                                         <img src="${user.profileImg || 'https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/icon-192.png?alt=media&token=8d29fc43-51ea-45f3-a41a-10b8f2e0d9cf'}" 
@@ -1662,139 +1714,127 @@
                                     <div class="user-name">${user.fullName}</div>
                                     <div class="user-phone">📱 ${user.phone}</div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="info-grid">
-                                        <div class="info-item">
-                                            <div class="info-label">🏫 المدرسة/المركز</div>
-                                            <div class="info-value">${user.school || '-'}</div>
+                                <div class="card-info-flip">
+                                    <div class="card-info-inner">
+                                        <div class="card-info-face card-info-front">
+                                            <div class="card-body">
+                                                <div class="info-grid">
+                                                    <div class="info-item">
+                                                        <div class="info-label">🏫 المدرسة/المركز</div>
+                                                        <div class="info-value">${user.school || '-'}</div>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <div class="info-label">🔢 رقم المحطة</div>
+                                                        <div class="info-value">${user.stationNumber || '-'}</div>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <div class="info-label">📍 القضاء</div>
+                                                        <div class="info-value">${user.district}</div>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <div class="info-label">👥 الجنس</div>
+                                                        <div class="info-value">${user.gender}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="flip-hint">👆 اضغط على المعلومات لرؤية المزيد</div>
+                                            </div>
                                         </div>
-                                        <div class="info-item">
-                                            <div class="info-label">🔢 رقم المحطة</div>
-                                            <div class="info-value">${user.stationNumber || '-'}</div>
+                                        <div class="card-info-face card-info-back">
+                                            <div class="card-body">
+                                                <div class="info-grid">
+                                                    <div class="info-item">
+                                                        <div class="info-label">🎯 المرشح</div>
+                                                        <div class="info-value">${user.candidate || '-'}</div>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <div class="info-label">🏛️ الركيزة</div>
+                                                        <div class="info-value">${user.parent || '-'}</div>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <div class="info-label">👨‍👩‍👧‍👦 عدد الأفراد</div>
+                                                        <div class="info-value">${user.individualCount || 1}</div>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <div class="info-label">📅 تاريخ التسجيل</div>
+                                                        <div class="info-value">${new Date(user.createdAt).toLocaleDateString('ar-IQ')}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="flip-hint">👆 اضغط للعودة</div>
+                                                <div style="text-align:center;margin-top:24px;">
+                                                    <button class="logout-icon" onclick="logoutUser()" title="تسجيل الخروج" style="position:static;display:inline-block;width:auto;height:auto;padding:12px 32px;font-size:1.1em;border-radius:16px;background:var(--danger);color:white;box-shadow:0 4px 16px rgba(239,68,68,0.2);margin-bottom:8px;">🚪 تسجيل الخروج</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="info-item">
-                                            <div class="info-label">📍 القضاء</div>
-                                            <div class="info-value">${user.district}</div>
-                                        </div>
-                                        <div class="info-item">
-                                            <div class="info-label">👥 الجنس</div>
-                                            <div class="info-value">${user.gender}</div>
-                                        </div>
-                                    </div>
-                                    <div class="flip-hint">👆 اضغط على البطاقة لرؤية المزيد</div>
-                                </div>
-                            </div>
-                            
-                            <!-- الوجه الخلفي -->
-                            <div class="card-face card-back">
-                                <div class="card-header" style="background: rgba(255,255,255,0.1);">
-                                    <div class="user-name">معلومات إضافية</div>
-                                    <div class="user-phone">🗳️ صوتك اليوم مستقبلك غداً</div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="info-grid">
-                                        <div class="info-item">
-                                            <div class="info-label">🎯 المرشح</div>
-                                            <div class="info-value">${user.candidate || '-'}</div>
-                                        </div>
-                                        <div class="info-item">
-                                            <div class="info-label">🏛️ الركيزة</div>
-                                            <div class="info-value">${user.parent || '-'}</div>
-                                        </div>
-                                        <div class="info-item">
-                                            <div class="info-label">👨‍👩‍👧‍👦 عدد الأفراد</div>
-                                            <div class="info-value">${user.individualCount || 1}</div>
-                                        </div>
-                                        <div class="info-item">
-                                            <div class="info-label">📅 تاريخ التسجيل</div>
-                                            <div class="info-value">${new Date(user.createdAt).toLocaleDateString('ar-IQ')}</div>
-                                        </div>
-                                    </div>
-                                    <div class="flip-hint">👆 اضغط للعودة</div>
-                                    <div style="text-align:center;margin-top:24px;">
-                                        <button class="logout-icon" onclick="logoutUser()" title="تسجيل الخروج" style="position:static;display:inline-block;width:auto;height:auto;padding:12px 32px;font-size:1.1em;border-radius:16px;background:var(--danger);color:white;box-shadow:0 4px 16px rgba(239,68,68,0.2);margin-bottom:8px;">🚪 تسجيل الخروج</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                // تفعيل قلب البطاقة
-                const flipCard = document.getElementById('flipCard');
-                if (flipCard) {
-                    flipCard.addEventListener('click', function() {
-                        flipCard.classList.toggle('flipped');
-                    });
-                }
-                
-                // تفعيل رفع الصورة
-                const profileInput = document.getElementById('profileInput');
-                const profileImg = document.getElementById('profileImg');
-                const cameraIcon = document.querySelector('.camera-icon');
-                
-                if (profileImg && profileInput && cameraIcon) {
-                    profileImg.onclick = (e) => {
-                        e.stopPropagation();
-                        profileInput.click();
-                    };
-                    cameraIcon.onclick = (e) => {
-                        e.stopPropagation();
-                        profileInput.click();
-                    };
-                    
-                    profileInput.onchange = function(e) {
-                        const file = e.target.files[0];
-                        if (file) {
-                            showLoadingSpinner('جاري رفع صورة المنتخب...');
-                            
-                            const storageRef = firebase.storage().ref();
-                            const fileRef = storageRef.child('user-profiles/' + user.phone + '_profile_' + Date.now() + '.webp');
-                            
-                            const uploadTask = fileRef.put(file);
-                            
-                            // متابعة التقدم
-                            uploadTask.on('state_changed',
-                                (snapshot) => {
-                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                    document.getElementById('progressBar').style.width = progress + '%';
-                                    document.getElementById('uploadPercentage').textContent = Math.floor(progress) + '%';
-                                },
-                                (error) => {
-                                    hideLoadingSpinner();
-                                    showAlert('فشل رفع الصورة: ' + error.message, 'error');
-                                },
-                                () => {
-                                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                `;
+                setTimeout(() => {
+                    // تفعيل قلب المعلومات فقط
+                    const flipCard = document.getElementById('flipCard');
+                    const cardInfoFlip = flipCard.querySelector('.card-info-flip');
+                    if (cardInfoFlip) {
+                        cardInfoFlip.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            flipCard.classList.toggle('flipped');
+                        });
+                    }
+                    // تفعيل رفع الصورة
+                    const profileInput = document.getElementById('profileInput');
+                    const profileImg = document.getElementById('profileImg');
+                    const cameraIcon = document.querySelector('.camera-icon');
+                    if (profileImg && profileInput && cameraIcon) {
+                        profileImg.onclick = (e) => {
+                            e.stopPropagation();
+                            profileInput.click();
+                        };
+                        cameraIcon.onclick = (e) => {
+                            e.stopPropagation();
+                            profileInput.click();
+                        };
+                        profileInput.onchange = function(e) {
+                            const file = e.target.files[0];
+                            if (file) {
+                                showLoadingSpinner('جاري رفع صورة المنتخب...');
+                                const storageRef = firebase.storage().ref();
+                                const fileRef = storageRef.child('user-profiles/' + user.phone + '_profile_' + Date.now() + '.webp');
+                                const uploadTask = fileRef.put(file);
+                                uploadTask.on('state_changed',
+                                    (snapshot) => {
+                                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                        document.getElementById('progressBar').style.width = progress + '%';
+                                        document.getElementById('uploadPercentage').textContent = Math.floor(progress) + '%';
+                                    },
+                                    (error) => {
                                         hideLoadingSpinner();
-                                        document.getElementById('profileImg').src = downloadURL;
-                                        user.profileImg = downloadURL;
-                                        
-                                        // تحديث localStorage
-                                        let users = JSON.parse(localStorage.getItem('users') || '[]');
-                                        let idx = users.findIndex(u => u.phone === user.phone);
-                                        if (idx !== -1) {
-                                            users[idx].profileImg = downloadURL;
-                                            localStorage.setItem('users', JSON.stringify(users));
-                                        }
-                                        localStorage.setItem('currentUser', JSON.stringify(user));
-                                        
-                                        // تحديث Firebase
-                                        if (db) {
-                                            db.ref('users/' + user.phone + '/profileImg').set(downloadURL);
-                                        }
-                                        
-                                        showAlert('تم رفع الصورة بنجاح! 📸');
-                                    });
-                                }
-                            );
-                        }
-                    };
-                }
-            }, 100);
-        }
+                                        showAlert('فشل رفع الصورة: ' + error.message, 'error');
+                                    },
+                                    () => {
+                                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                                            hideLoadingSpinner();
+                                            document.getElementById('profileImg').src = downloadURL;
+                                            user.profileImg = downloadURL;
+                                            let users = JSON.parse(localStorage.getItem('users') || '[]');
+                                            let idx = users.findIndex(u => u.phone === user.phone);
+                                            if (idx !== -1) {
+                                                users[idx].profileImg = downloadURL;
+                                                localStorage.setItem('users', JSON.stringify(users));
+                                            }
+                                            localStorage.setItem('currentUser', JSON.stringify(user));
+                                            if (db) {
+                                                db.ref('users/' + user.phone + '/profileImg').set(downloadURL);
+                                            }
+                                            showAlert('تم رفع الصورة بنجاح! 📸');
+                                        });
+                                    }
+                                );
+                            }
+                        };
+                    }
+                }, 100);
+            }
 
         // تسجيل الخروج
         function logoutUser() {
