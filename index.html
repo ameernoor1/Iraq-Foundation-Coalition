@@ -1185,12 +1185,7 @@
 </head>
 <body>
     <!-- شاشة الترحيب -->
-    <div id="iosInstallPrompt" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:white;border-radius:18px;box-shadow:0 4px 24px rgba(0,0,0,0.18);padding:18px 22px;z-index:99999;text-align:center;max-width:340px;">
-        <div style="font-size:1.2em;font-weight:700;color:#1a7b7f;margin-bottom:8px;">تثبيت التطبيق على جهازك</div>
-        <div style="font-size:1em;color:#555;margin-bottom:10px;">للحصول على تجربة أفضل، أضف التطبيق إلى الشاشة الرئيسية:</div>
-        <div style="font-size:0.95em;color:#888;margin-bottom:10px;">اضغط على زر <span style="font-size:1.2em;">مشاركة <img src='https://upload.wikimedia.org/wikipedia/commons/3/3e/IOS_Share_icon.png' style='height:1em;vertical-align:middle;'></span> ثم اختر <b>إضافة إلى الشاشة الرئيسية</b></div>
-        <button onclick="document.getElementById('iosInstallPrompt').style.display='none'" style="background:#1a7b7f;color:white;padding:8px 18px;border:none;border-radius:10px;font-size:1em;box-shadow:0 2px 8px rgba(26,123,127,0.12);margin-top:8px;cursor:pointer;">حسناً</button>
-    </div>
+    <!-- تم إلغاء رسالة تثبيت التطبيق على iOS -->
     <div id="welcomeScreen">
         <div class="welcome-content">
             <img src="https://firebasestorage.googleapis.com/v0/b/messageemeapp.appspot.com/o/Gemini_Generated_Image_tkcjwitkcjwitkcj.png?alt=media&token=3fbffecf-8da5-405d-bcc4-82e2133149f1" alt="شعار التطبيق" class="welcome-logo">
@@ -1264,17 +1259,37 @@
             }
         }
         showIOSInstallPrompt();
-        // قوائم الأقضية والمرشحين
+        // قائمة الأقضية (Qada) والنواحي (Nahia) لمحافظة بابل – مُحدَّثة
         const DISTRICTS = [
-            'بابل',
+            // قضاء الحلة (مركز المحافظة)
             'الحلة',
+            'الكفل',
+            'أبي غرق',
+
+            // قضاء المحاويل
             'المحاويل',
-            'المسيب',
+            'المشروع',
+            'الإمام',
+            'النيل',
+
+            // قضاء الهاشمية
             'الهاشمية',
             'القاسم',
+            'الطليعة',
+
+            // قضاء الحمزة الغربي
+            'الحمزة الغربي',
             'المدحتية',
+            'الشوملي',
+            'الخميسية',
+            'الحصين',
+
+            // قضاء المسيب
+            'المسيب',
+            'سدة الهندية',
+            'جرف النصر',      // الاسم الرسمي الحالي بدل "جرف الصخر"
             'الإسكندرية',
-            'صدة الهندية'
+            'الحصوة'
         ];
 
         const CANDIDATES = [
@@ -1312,7 +1327,7 @@
 
         // تسجيل Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./service-worker.js')
+            navigator.serviceWorker.register('./service-worker.js?v=20251024', { updateViaCache: 'none' })
                 .then(reg => console.log('✅ Service Worker مسجل'))
                 .catch(err => console.log('❌ خطأ في تسجيل Service Worker:', err));
         }
@@ -1570,14 +1585,33 @@
                 const frontInput = document.getElementById('frontImageInput');
                 const frontName = document.getElementById('frontImageName');
                 if (captureBtn && frontInput) {
+                    // عند الضغط على زر التقاط/اختيار صورة أمامية
                     captureBtn.onclick = function() {
+                        frontInput.accept = 'image/*';
+                        frontInput.capture = '';
                         frontInput.click();
                     };
+                    // عند اختيار صورة من الاستوديو أو التقاطها
                     frontInput.onchange = function(e) {
-                        if (frontInput.files && frontInput.files[0]) {
-                            frontName.textContent = 'تم اختيار الصورة: ' + frontInput.files[0].name;
+                        const file = e.target.files[0];
+                        if (file) {
+                            showLoadingSpinner('جاري معالجة الصورة الأمامية...');
+                            const reader = new FileReader();
+                            reader.onload = function(evt) {
+                                compressImage(evt.target.result, 400, 0.6, function(compressedDataUrl) {
+                                    // عرض اسم الصورة
+                                    if (frontName) {
+                                        frontName.textContent = 'تم اختيار الصورة: ' + file.name;
+                                    }
+                                    // حفظ الصورة المصغرة مؤقتاً في localStorage
+                                    localStorage.setItem('frontImageCompressed', compressedDataUrl);
+                                    hideLoadingSpinner();
+                                    showAlert('تم اختيار ومعالجة الصورة الأمامية بنجاح!');
+                                });
+                            };
+                            reader.readAsDataURL(file);
                         } else {
-                            frontName.textContent = '';
+                            if (frontName) frontName.textContent = '';
                         }
                     };
                 }
@@ -1737,7 +1771,7 @@
                                              class="profile-img" 
                                              id="profileImg">
                                         <div class="camera-icon">📷</div>
-                                        <input type="file" id="profileInput" accept="image/*">
+                                        <input type="file" id="profileInput" accept="image/*" capture="environment">
                                     </div>
                                     <div class="user-name">${user.fullName}</div>
                                     <div class="user-phone">📱 ${user.phone}</div>
@@ -1822,44 +1856,164 @@
                             e.stopPropagation();
                             profileInput.click();
                         };
+
                         profileInput.onchange = function(e) {
                             const file = e.target.files[0];
                             if (file) {
-                                showLoadingSpinner('جاري رفع صورة المنتخب...');
-                                const storageRef = firebase.storage().ref();
-                                const fileRef = storageRef.child('user-profiles/' + user.phone + '_profile_' + Date.now() + '.webp');
-                                const uploadTask = fileRef.put(file);
-                                uploadTask.on('state_changed',
-                                    (snapshot) => {
-                                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                        document.getElementById('progressBar').style.width = progress + '%';
-                                        document.getElementById('uploadPercentage').textContent = Math.floor(progress) + '%';
-                                    },
-                                    (error) => {
-                                        hideLoadingSpinner();
-                                        showAlert('فشل رفع الصورة: ' + error.message, 'error');
-                                    },
-                                    () => {
-                                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                                showLoadingSpinner('جاري معالجة الصورة...');
+                                const reader = new FileReader();
+                                reader.onload = function(evt) {
+                                    compressImage(evt.target.result, 800, 0.7, function(compressedDataUrl) {
+                                        localStorage.setItem('pendingProfileImg_' + user.phone, compressedDataUrl);
+                                        document.getElementById('profileImg').src = compressedDataUrl;
+                                        user.profileImg = compressedDataUrl;
+                                        let users = JSON.parse(localStorage.getItem('users') || '[]');
+                                        let idx = users.findIndex(u => u.phone === user.phone);
+                                        if (idx !== -1) {
+                                            users[idx].profileImg = compressedDataUrl;
+                                            localStorage.setItem('users', JSON.stringify(users));
+                                        }
+                                        localStorage.setItem('currentUser', JSON.stringify(user));
+                                        if (navigator.onLine) {
+                                            showLoadingSpinner('جاري رفع صورة المنتخب...');
+                                            uploadProfileImg(compressedDataUrl);
+                                        } else {
                                             hideLoadingSpinner();
-                                            document.getElementById('profileImg').src = downloadURL;
-                                            user.profileImg = downloadURL;
-                                            let users = JSON.parse(localStorage.getItem('users') || '[]');
-                                            let idx = users.findIndex(u => u.phone === user.phone);
-                                            if (idx !== -1) {
-                                                users[idx].profileImg = downloadURL;
-                                                localStorage.setItem('users', JSON.stringify(users));
-                                            }
-                                            localStorage.setItem('currentUser', JSON.stringify(user));
-                                            if (db) {
-                                                db.ref('users/' + user.phone + '/profileImg').set(downloadURL);
-                                            }
-                                            showAlert('تم رفع الصورة بنجاح! 📸');
-                                        });
-                                    }
-                                );
+                                            showAlert('تم حفظ الصورة محلياً! سيتم رفعها تلقائياً عند توفر الإنترنت.');
+                                            window.addEventListener('online', function syncProfileImg() {
+                                                showLoadingSpinner('جاري رفع صورة المنتخب...');
+                                                uploadProfileImg(localStorage.getItem('pendingProfileImg_' + user.phone));
+                                                window.removeEventListener('online', syncProfileImg);
+                                            });
+                                        }
+                                    });
+                                };
+                                reader.readAsDataURL(file);
                             }
                         };
+
+                        // دالة ضغط الصورة لأي صورة (أمامية أو خلفية)
+                        function compressImage(dataUrl, maxSize, quality, callback) {
+                            maxSize = 400;
+                            quality = 0.6;
+                            const img = new Image();
+                            img.onload = function() {
+                                let w = img.width;
+                                let h = img.height;
+                                if (w > maxSize || h > maxSize) {
+                                    if (w > h) {
+                                        h = Math.round(h * (maxSize / w));
+                                        w = maxSize;
+                                    } else {
+                                        w = Math.round(w * (maxSize / h));
+                                        h = maxSize;
+                                    }
+                                }
+                                const canvas = document.createElement('canvas');
+                                canvas.width = w;
+                                canvas.height = h;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, w, h);
+                                const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                                callback(compressedDataUrl);
+                            };
+                            img.onerror = function() {
+                                callback(dataUrl);
+                            };
+                            img.src = dataUrl;
+                        }
+
+                        // مثال: تطبيق التصغير عند رفع صورة أمامية
+                        // إذا كان لديك input آخر مثل #frontImageInput
+                        const frontImageInput = document.getElementById('frontImageInput');
+                        if (frontImageInput) {
+                            frontImageInput.onchange = function(e) {
+                                const file = e.target.files[0];
+                                if (file) {
+                                    showLoadingSpinner('جاري معالجة الصورة الأمامية...');
+                                    const reader = new FileReader();
+                                    reader.onload = function(evt) {
+                                        compressImage(evt.target.result, 400, 0.6, function(compressedDataUrl) {
+                                            // هنا يمكنك حفظ أو رفع الصورة الأمامية بنفس طريقة صورة المنتخب
+                                            // مثال: document.getElementById('frontImg').src = compressedDataUrl;
+                                            // أو uploadProfileImg(compressedDataUrl);
+                                            hideLoadingSpinner();
+                                            showAlert('تم تصغير الصورة الأمامية وجاهزة للرفع!');
+                                        });
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+                            };
+                        }
+
+                        function uploadProfileImg(dataUrl, retryCount = 0) {
+                            if (!dataUrl) return;
+                            showLoadingSpinner('جاري رفع صورة المنتخب...');
+                            // معالجة الصور الكبيرة وضبط النوع
+                            function dataURLtoBlob(dataurl) {
+                                var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+                                while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+                                return new Blob([u8arr], {type:mime});
+                            }
+                            var blob = dataURLtoBlob(dataUrl);
+                            // ضغط الصورة إذا كانت كبيرة جداً (اختياري)
+                            if (blob.size > 2 * 1024 * 1024) {
+                                showAlert('الصورة كبيرة جداً، يرجى التقاط صورة بحجم أقل من 2MB', 'error');
+                                hideLoadingSpinner();
+                                return;
+                            }
+                            const storageRef = firebase.storage().ref();
+                            const fileRef = storageRef.child('user-profiles/' + user.phone + '_profile_' + Date.now() + '.jpg');
+                            const uploadTask = fileRef.put(blob);
+                            let lastProgress = 0;
+                            let stuckTimeout = null;
+                            uploadTask.on('state_changed',
+                                (snapshot) => {
+                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                    document.getElementById('progressBar').style.width = progress + '%';
+                                    document.getElementById('uploadPercentage').textContent = Math.floor(progress) + '%';
+                                    // مراقبة التوقف عند 95%
+                                    if (progress > 90 && progress < 100) {
+                                        if (stuckTimeout) clearTimeout(stuckTimeout);
+                                        stuckTimeout = setTimeout(() => {
+                                            if (lastProgress === Math.floor(progress)) {
+                                                hideLoadingSpinner();
+                                                showAlert('هناك بطء في رفع الصورة، يرجى التأكد من جودة الإنترنت أو إعادة المحاولة.', 'error');
+                                            }
+                                        }, 12000); // 12 ثانية انتظار
+                                    }
+                                    lastProgress = Math.floor(progress);
+                                },
+                                (error) => {
+                                    hideLoadingSpinner();
+                                    if (retryCount < 2) {
+                                        showAlert('حدث خطأ أثناء رفع الصورة، إعادة المحاولة...', 'error');
+                                        setTimeout(() => uploadProfileImg(dataUrl, retryCount + 1), 2000);
+                                    } else {
+                                        showAlert('فشل رفع الصورة: ' + error.message, 'error');
+                                    }
+                                },
+                                () => {
+                                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                                        hideLoadingSpinner();
+                                        document.getElementById('profileImg').src = downloadURL;
+                                        user.profileImg = downloadURL;
+                                        let users = JSON.parse(localStorage.getItem('users') || '[]');
+                                        let idx = users.findIndex(u => u.phone === user.phone);
+                                        if (idx !== -1) {
+                                            users[idx].profileImg = downloadURL;
+                                            localStorage.setItem('users', JSON.stringify(users));
+                                        }
+                                        localStorage.setItem('currentUser', JSON.stringify(user));
+                                        if (db) {
+                                            db.ref('users/' + user.phone + '/profileImg').set(downloadURL);
+                                        }
+                                        localStorage.removeItem('pendingProfileImg_' + user.phone);
+                                        showAlert('تم رفع الصورة بنجاح! 📸');
+                                    });
+                                }
+                            );
+                        }
                     }
                 }, 100);
             }
